@@ -1,13 +1,15 @@
-import chalk from 'chalk';
-import * as readline from 'node:readline/promises';
-import { 
-  loadEnvironment, 
-  setEnvironmentVariable, 
-  removeEnvironmentVariable, 
+import * as readline from "node:readline/promises";
+
+import chalk from "chalk";
+import {
+  loadEnvironment,
+  setEnvironmentVariable,
+  removeEnvironmentVariable,
   validateEnvironment,
   ENV_SCHEMA,
-  type EnvironmentConfig 
-} from '@cjode/state';
+  type EnvironmentConfig,
+  type RequiredEnvCheck,
+} from "@cjode/state";
 
 interface EnvOptions {
   list?: boolean;
@@ -38,58 +40,58 @@ export async function envCommand(options: EnvOptions) {
 }
 
 async function showEnvironmentStatus(env: EnvironmentConfig) {
-  console.log(chalk.blue('🔧 Cjode Environment Configuration\n'));
-  
+  console.log(chalk.blue("🔧 Cjode Environment Configuration\n"));
+
   const validation = validateEnvironment(env);
-  
+
   if (validation.valid) {
-    console.log(chalk.green('✅ Environment is properly configured\n'));
+    console.log(chalk.green("✅ Environment is properly configured\n"));
   } else {
-    console.log(chalk.yellow('⚠️  Some required environment variables are missing:\n'));
+    console.log(chalk.yellow("⚠️  Some required environment variables are missing:\n"));
     for (const missing of validation.missing) {
-      const schema = ENV_SCHEMA.find(s => s.key === missing);
-      console.log(chalk.red(`  ❌ ${missing}: ${schema?.description || 'Required variable'}`));
+      const schema = ENV_SCHEMA.find((s: RequiredEnvCheck) => s.key === missing);
+      console.log(chalk.red(`  ❌ ${missing}: ${schema?.description || "Required variable"}`));
     }
-    console.log(chalk.gray('\nRun `cjode env --setup` to configure missing variables.\n'));
+    console.log(chalk.gray("\nRun `cjode env --setup` to configure missing variables.\n"));
   }
 
   // Show configured variables (masked for security)
-  console.log(chalk.blue('Configured variables:'));
-  for (const { key, description, required } of ENV_SCHEMA) {
+  console.log(chalk.blue("Configured variables:"));
+  for (const { key, description, required } of ENV_SCHEMA as RequiredEnvCheck[]) {
     const value = env[key];
-    const status = value 
-      ? chalk.green('✓ Set') 
-      : required 
-        ? chalk.red('✗ Missing') 
-        : chalk.gray('○ Optional');
-    
-    const maskedValue = value ? maskSecretValue(value) : chalk.gray('(not set)');
+    const status = value
+      ? chalk.green("✓ Set")
+      : required
+        ? chalk.red("✗ Missing")
+        : chalk.gray("○ Optional");
+
+    const maskedValue = value ? maskSecretValue(value) : chalk.gray("(not set)");
     console.log(`  ${status} ${key}: ${maskedValue}`);
     console.log(chalk.gray(`      ${description}`));
   }
-  
-  console.log(chalk.gray('\nUse `cjode env --help` for more options.'));
+
+  console.log(chalk.gray("\nUse `cjode env --help` for more options."));
 }
 
 async function listEnvironmentVariables(env: EnvironmentConfig) {
-  console.log(chalk.blue('Environment Variables:\n'));
-  
-  for (const { key, description, required } of ENV_SCHEMA) {
+  console.log(chalk.blue("Environment Variables:\n"));
+
+  for (const { key, description, required } of ENV_SCHEMA as RequiredEnvCheck[]) {
     const value = env[key];
-    const requiredLabel = required ? chalk.red('[REQUIRED]') : chalk.gray('[OPTIONAL]');
-    
+    const requiredLabel = required ? chalk.red("[REQUIRED]") : chalk.gray("[OPTIONAL]");
+
     console.log(`${key} ${requiredLabel}`);
     console.log(`  Description: ${description}`);
-    console.log(`  Value: ${value ? maskSecretValue(value) : chalk.gray('(not set)')}`);
+    console.log(`  Value: ${value ? maskSecretValue(value) : chalk.gray("(not set)")}`);
     console.log();
   }
 }
 
 async function setEnvironmentVariableInteractive(key: string) {
-  const schema = ENV_SCHEMA.find(s => s.key === key);
+  const schema = ENV_SCHEMA.find((s: RequiredEnvCheck) => s.key === key);
   if (!schema) {
     console.error(chalk.red(`❌ Unknown environment variable: ${key}`));
-    console.log('Available variables:', ENV_SCHEMA.map(s => s.key).join(', '));
+    console.log("Available variables:", ENV_SCHEMA.map((s: RequiredEnvCheck) => s.key).join(", "));
     return;
   }
 
@@ -102,25 +104,24 @@ async function setEnvironmentVariableInteractive(key: string) {
     console.log(chalk.blue(`Setting ${key}`));
     console.log(chalk.gray(`Description: ${schema.description}`));
     console.log();
-    
+
     const value = await rl.question(`Enter value for ${key}: `);
-    
+
     if (!value.trim()) {
-      console.log(chalk.yellow('No value entered. Variable not set.'));
+      console.log(chalk.yellow("No value entered. Variable not set."));
       return;
     }
 
     setEnvironmentVariable(schema.key, value.trim());
     console.log(chalk.green(`✅ Set ${key} = ${maskSecretValue(value.trim())}`));
     console.log(chalk.gray(`Saved to: ~/.config/cjode/.env`));
-    
   } finally {
     rl.close();
   }
 }
 
 async function unsetEnvironmentVariableInteractive(key: string) {
-  const schema = ENV_SCHEMA.find(s => s.key === key);
+  const schema = ENV_SCHEMA.find((s: RequiredEnvCheck) => s.key === key);
   if (!schema) {
     console.error(chalk.red(`❌ Unknown environment variable: ${key}`));
     return;
@@ -131,32 +132,32 @@ async function unsetEnvironmentVariableInteractive(key: string) {
 }
 
 async function validateEnvironmentVariables(env: EnvironmentConfig) {
-  console.log(chalk.blue('🔍 Validating Environment Configuration\n'));
-  
+  console.log(chalk.blue("🔍 Validating Environment Configuration\n"));
+
   const validation = validateEnvironment(env);
-  
+
   if (validation.valid) {
-    console.log(chalk.green('✅ All required environment variables are configured!'));
+    console.log(chalk.green("✅ All required environment variables are configured!"));
   } else {
-    console.log(chalk.red('❌ Validation failed. Missing required variables:\n'));
-    
+    console.log(chalk.red("❌ Validation failed. Missing required variables:\n"));
+
     for (const missing of validation.missing) {
-      const schema = ENV_SCHEMA.find(s => s.key === missing);
-      console.log(`  • ${missing}: ${schema?.description || 'Required variable'}`);
+      const schema = ENV_SCHEMA.find((s: RequiredEnvCheck) => s.key === missing);
+      console.log(`  • ${missing}: ${schema?.description || "Required variable"}`);
     }
-    
-    console.log(chalk.yellow('\nRun `cjode env --setup` to configure missing variables.'));
+
+    console.log(chalk.yellow("\nRun `cjode env --setup` to configure missing variables."));
     process.exit(1);
   }
 }
 
 async function setupEnvironment() {
-  console.log(chalk.blue('🚀 Cjode Environment Setup\n'));
-  console.log('This will help you configure required environment variables.\n');
-  
+  console.log(chalk.blue("🚀 Cjode Environment Setup\n"));
+  console.log("This will help you configure required environment variables.\n");
+
   const env = loadEnvironment();
   const validation = validateEnvironment(env);
-  
+
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -165,15 +166,15 @@ async function setupEnvironment() {
   try {
     // Configure missing required variables
     for (const missingKey of validation.missing) {
-      const schema = ENV_SCHEMA.find(s => s.key === missingKey);
+      const schema = ENV_SCHEMA.find((s: RequiredEnvCheck) => s.key === missingKey);
       if (!schema) continue;
-      
+
       console.log(chalk.yellow(`⚠️  ${missingKey} is required but not set`));
       console.log(chalk.gray(`   ${schema.description}`));
       console.log();
-      
+
       const value = await rl.question(`Enter your ${missingKey}: `);
-      
+
       if (value.trim()) {
         setEnvironmentVariable(schema.key, value.trim());
         console.log(chalk.green(`✅ Set ${missingKey}`));
@@ -182,22 +183,22 @@ async function setupEnvironment() {
       }
       console.log();
     }
-    
+
     // Ask about optional variables
-    const optionalVars = ENV_SCHEMA.filter(s => !s.required && !env[s.key]);
-    
+    const optionalVars = ENV_SCHEMA.filter((s: RequiredEnvCheck) => !s.required && !env[s.key]);
+
     if (optionalVars.length > 0) {
       const configureOptional = await rl.question(
-        chalk.blue('Would you like to configure optional variables? (y/n): ')
+        chalk.blue("Would you like to configure optional variables? (y/n): "),
       );
-      
-      if (configureOptional.toLowerCase().startsWith('y')) {
+
+      if (configureOptional.toLowerCase().startsWith("y")) {
         for (const schema of optionalVars) {
           console.log(chalk.blue(`${schema.key} (optional)`));
           console.log(chalk.gray(`   ${schema.description}`));
-          
+
           const value = await rl.question(`Enter value (or press Enter to skip): `);
-          
+
           if (value.trim()) {
             setEnvironmentVariable(schema.key, value.trim());
             console.log(chalk.green(`✅ Set ${schema.key}`));
@@ -206,10 +207,9 @@ async function setupEnvironment() {
         }
       }
     }
-    
-    console.log(chalk.green('🎉 Environment setup complete!'));
-    console.log(chalk.gray('Configuration saved to: ~/.config/cjode/.env'));
-    
+
+    console.log(chalk.green("🎉 Environment setup complete!"));
+    console.log(chalk.gray("Configuration saved to: ~/.config/cjode/.env"));
   } finally {
     rl.close();
   }
@@ -217,9 +217,9 @@ async function setupEnvironment() {
 
 function maskSecretValue(value: string): string {
   if (value.length <= 8) {
-    return '***';
+    return "***";
   }
   const start = value.slice(0, 4);
   const end = value.slice(-4);
-  return `${start}${'*'.repeat(value.length - 8)}${end}`;
+  return `${start}${"*".repeat(value.length - 8)}${end}`;
 }

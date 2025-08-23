@@ -10,7 +10,7 @@ try {
   const env = loadEnvironment();
 
   // Set environment variables that aren't already set
-  for (const [key, value] of Object.entries(env)) {
+  for (const [key, value] of Object.entries(env as Record<string, string>)) {
     if (value && !process.env[key]) {
       process.env[key] = value;
     }
@@ -37,6 +37,10 @@ interface ChatRequest {
 interface ChatResponse {
   response: string;
   conversationId: string;
+}
+
+interface ChatErrorResponse {
+  error: string;
 }
 
 interface Message {
@@ -91,7 +95,7 @@ server.get<{
 // Chat endpoint with AI streaming support
 server.post<{
   Body: ChatRequest;
-  Reply: ChatResponse;
+  Reply: ChatResponse | ChatErrorResponse;
 }>("/chat", async (request, reply) => {
   const { message, conversationId = crypto.randomUUID() } = request.body;
   const acceptHeader = request.headers.accept || "";
