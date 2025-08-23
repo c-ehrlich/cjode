@@ -5,8 +5,7 @@ export default defineConfig({
   format: ['esm'],
   target: 'node20',
   clean: true,
-  dts: false, // CLI doesn't need type definitions
-  external: ['@cjode/core', '@cjode/state'],
+  dts: false,
   splitting: false,
   sourcemap: true,
 });
