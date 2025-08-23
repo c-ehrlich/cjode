@@ -131,7 +131,7 @@ export function loadEnvironment(): EnvironmentConfig {
             envPath = envFilePath;
             break;
           }
-        } catch (error) {
+        } catch {
           // Invalid package.json, continue searching
         }
       }
