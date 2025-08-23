@@ -51,35 +51,43 @@ A TypeScript monorepo for an agentic coding assistant with streaming AI response
 The system supports multiple levels of environment configuration:
 
 #### Development Mode (Local Development)
-When developing in this monorepo, create a `.env` file in the project root:
+When developing in this monorepo, **ONLY** local `.env` is used:
 
 ```bash
 # Copy the example file
 cp .env.example .env
 
-# Edit with your values
-ANTHROPIC_API_KEY=your_key_here
+# Edit with your real API keys
+ANTHROPIC_API_KEY=your_real_key_here
 OPENAI_API_KEY=your_openai_key_here
 CJODE_DEFAULT_MODEL=claude-3-sonnet
 CJODE_SERVER_PORT=3001
 CJODE_SERVER_HOST=127.0.0.1
 ```
 
-**Development mode is automatically detected when:**
-- `NODE_ENV=development` is set, OR
-- Running from the monorepo directory (detects `turbo.json` + `pnpm-workspace.yaml`)
+**Development mode is detected when:**
+- `NODE_ENV=development` is set (automatically set by dev scripts)
 
-**In dev mode, local `.env` takes priority over global config.**
+**In dev mode:**
+- ✅ **ONLY** reads local `.env` file
+- ❌ **Ignores** system environment variables
+- ❌ **Ignores** global config (`~/.config/cjode/.env`)
 
-You'll see this message when local .env is loaded:
+You'll see this message in dev mode:
 ```
-🔧 Loaded local .env file (development mode)
+🔧 Development mode: using local .env file only
 ```
 
 #### Production/Global Mode
-For global CLI usage, environment variables are stored in:
-- **Linux/macOS**: `~/.config/cjode/.env`
-- **Windows**: `%AppData%\Roaming\cjode\.env`
+When using the globally installed CLI, environment variables come from:
+
+**Priority order:**
+1. **System environment variables** (highest priority)
+2. **Global config file** (fallback):
+   - **Linux/macOS**: `~/.config/cjode/.env`
+   - **Windows**: `%AppData%\Roaming\cjode\.env`
+
+**Never reads local `.env` files in production mode.**
 
 Use the CLI commands to manage global configuration:
 ```bash
@@ -112,7 +120,7 @@ pnpm lint
 pnpm typecheck
 
 # Start development server with hot reload (rebuilds + restarts on changes)
-pnpm --filter=@cjode/server dev
+pnpm dev:server
 
 # Start development client (in another terminal)
 pnpm dev:client
@@ -124,32 +132,62 @@ PORT=8080 pnpm dev:client
 node packages/cli/bin/cjode.js server
 ```
 
-### Testing the Streaming
+### Testing the AI Chat
 
-1. **Start the server:**
+**Prerequisites:** Make sure you have a valid Anthropic API key configured:
+```bash
+# Check your environment
+node packages/cli/bin/cjode.js env --validate
+
+# If not configured, set it up
+node packages/cli/bin/cjode.js env --setup
+```
+
+**Development Workflow:**
+
+1. **Start the hot-reload server:**
    ```bash
-   node packages/cli/bin/cjode.js server
+   pnpm dev:server
    ```
 
-2. **Test with CLI client:**
+2. **In another terminal, start the chat client:**
    ```bash
-   node packages/cli/bin/cjode.js chat
+   pnpm dev:client
+   
+   # Or with custom port:
+   PORT=8080 pnpm dev:client
    ```
 
-3. **Test with curl (streaming):**
+3. **Test multi-turn conversations:**
+   - Each new CLI session creates a fresh conversation
+   - Within a session, conversation history is preserved
+   - Ask follow-up questions to test context retention
+
+**Manual Testing:**
+
+4. **Test with curl (streaming AI response):**
    ```bash
    curl -X POST http://127.0.0.1:3001/chat \
      -H "Content-Type: application/json" \
      -H "Accept: text/event-stream" \
-     -d '{"message": "hello"}' \
+     -d '{"message": "Hello, can you help me with Python?"}' \
      --no-buffer
    ```
 
-4. **Test with curl (JSON):**
+5. **Test with curl (JSON response):**
    ```bash
    curl -X POST http://127.0.0.1:3001/chat \
      -H "Content-Type: application/json" \
-     -d '{"message": "hello"}'
+     -d '{"message": "What is TypeScript?"}'
+   ```
+
+6. **View conversation debug info:**
+   ```bash
+   # List all conversations
+   curl http://127.0.0.1:3001/conversations
+   
+   # View specific conversation
+   curl http://127.0.0.1:3001/conversations/{conversation-id}
    ```
 
 ## 📁 Project Structure
@@ -201,9 +239,11 @@ cjode env --validate      # Validate configuration
 - **Type-safe**: Full TypeScript with proper module boundaries
 
 ### Current Implementation
-- **Mock streaming**: Outputs "foo bar baz" with 1-second delays
-- **SSE protocol**: Ready for real AI model integration
+- **Real AI streaming**: Claude 3.5 Sonnet via Vercel AI SDK
+- **Multi-turn conversations**: Conversation history preserved within sessions
+- **SSE protocol**: Server-Sent Events for real-time streaming
 - **Environment management**: Global and local configuration
+- **Hot reload development**: Server restarts automatically on changes
 - **Server/client architecture**: Foundation for multiple UIs
 
 ### Streaming Protocol

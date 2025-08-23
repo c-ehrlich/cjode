@@ -1,6 +1,7 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname } from 'node:path';
-import { configFiles, configPaths } from '../config/paths.js';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+
+import { configFiles } from "../config/paths.js";
 
 export interface EnvironmentConfig {
   ANTHROPIC_API_KEY?: string;
@@ -18,115 +19,120 @@ export interface RequiredEnvCheck {
 
 export const ENV_SCHEMA: RequiredEnvCheck[] = [
   {
-    key: 'ANTHROPIC_API_KEY',
-    description: 'Anthropic Claude API key',
+    key: "ANTHROPIC_API_KEY",
+    description: "Anthropic Claude API key",
     required: true,
   },
   {
-    key: 'OPENAI_API_KEY', 
-    description: 'OpenAI API key',
+    key: "OPENAI_API_KEY",
+    description: "OpenAI API key",
     required: false,
   },
   {
-    key: 'CJODE_DEFAULT_MODEL',
-    description: 'Default model to use (e.g., claude-3-sonnet)',
+    key: "CJODE_DEFAULT_MODEL",
+    description: "Default model to use (e.g., claude-3-sonnet)",
     required: false,
   },
   {
-    key: 'CJODE_SERVER_PORT',
-    description: 'Port for the Cjode server',
+    key: "CJODE_SERVER_PORT",
+    description: "Port for the Cjode server",
     required: false,
   },
   {
-    key: 'CJODE_SERVER_HOST',
-    description: 'Host for the Cjode server',
+    key: "CJODE_SERVER_HOST",
+    description: "Host for the Cjode server",
     required: false,
   },
 ];
 
 /**
  * Detect if we're running in development mode
+ * ONLY checks NODE_ENV environment variable
  */
 function isDevMode(): boolean {
-  // Check NODE_ENV
-  if (process.env.NODE_ENV === 'development') {
-    return true;
-  }
-  
-  // Check if we're in the monorepo (presence of turbo.json and pnpm-workspace.yaml)
-  if (existsSync('turbo.json') && existsSync('pnpm-workspace.yaml')) {
-    return true;
-  }
-  
-  // Check if we're running from packages directory structure (development context)
-  if (existsSync('packages') && existsSync('apps')) {
-    return true;
-  }
-  
-  return false;
+  return process.env.NODE_ENV === "development";
 }
 
 /**
- * Load environment variables from multiple sources:
- * 
- * Development Mode:
- * 1. System environment variables
- * 2. Project-local .env file (PRIORITY)
- * 3. User's global .env file (fallback)
- * 
- * Production Mode:
- * 1. System environment variables  
- * 2. User's global .env file (ONLY)
+ * Load environment variables with clear separation:
+ *
+ * Development Mode (in monorepo):
+ * - ONLY loads from local .env file
+ * - Ignores system env vars and global config
+ *
+ * Production Mode (installed globally or outside monorepo):
+ * - System environment variables (highest priority)
+ * - Global XDG config file (~/.config/cjode/.env)
+ * - NEVER reads local .env files
  */
 export function loadEnvironment(): EnvironmentConfig {
   const env: EnvironmentConfig = {};
   const devMode = isDevMode();
 
-  // 1. Load from system environment (always first)
-  for (const { key } of ENV_SCHEMA) {
-    const value = process.env[key];
-    if (value) {
-      env[key] = value;
-    }
-  }
-
   if (devMode) {
-    // Development mode: local .env takes priority over global
-    
-    // 2a. Load from user's global .env file first (as fallback)
-    try {
-      if (existsSync(configFiles.env)) {
-        const globalEnvContent = readFileSync(configFiles.env, 'utf-8');
-        const globalEnv = parseEnvFile(globalEnvContent);
-        Object.assign(env, globalEnv);
+    // Development mode: ONLY use local .env file
+    // Look for .env in project root (find by walking up to find package.json with "private": true)
+    let envPath = ".env";
+    let searchDir = process.cwd();
+
+    // Walk up directories to find the monorepo root
+    while (searchDir !== "/" && searchDir !== ".") {
+      const packageJsonPath = join(searchDir, "package.json");
+      const envFilePath = join(searchDir, ".env");
+
+      if (existsSync(packageJsonPath)) {
+        try {
+          const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
+          // Found monorepo root (has "private": true and workspace config)
+          if (
+            packageJson.private &&
+            (packageJson.workspaces || existsSync(join(searchDir, "pnpm-workspace.yaml")))
+          ) {
+            envPath = envFilePath;
+            break;
+          }
+        } catch (error) {
+          // Invalid package.json, continue searching
+        }
       }
-    } catch (error) {
-      console.warn(`Warning: Could not load global .env file: ${error}`);
+
+      searchDir = dirname(searchDir);
     }
 
-    // 3a. Load from project-local .env file (overrides global)
     try {
-      if (existsSync('.env')) {
-        const localEnvContent = readFileSync('.env', 'utf-8');
+      if (existsSync(envPath)) {
+        const localEnvContent = readFileSync(envPath, "utf-8");
         const localEnv = parseEnvFile(localEnvContent);
         Object.assign(env, localEnv);
-        console.log('🔧 Loaded local .env file (development mode)');
+        console.log(`🔧 Development mode: using local .env file (${envPath})`);
+      } else {
+        console.warn(
+          `⚠️  Development mode but no .env file found. Copy .env.example to .env in project root`,
+        );
       }
     } catch (error) {
-      // Silently ignore - project .env is optional
+      console.error(`Error loading local .env file: ${error}`);
     }
   } else {
-    // Production mode: only global .env file
-    
-    // 2b. Load from user's global .env file only
+    // Production mode: system env vars + global config only
+
+    // 1. Load from user's global .env file first (fallback)
     try {
       if (existsSync(configFiles.env)) {
-        const globalEnvContent = readFileSync(configFiles.env, 'utf-8');
+        const globalEnvContent = readFileSync(configFiles.env, "utf-8");
         const globalEnv = parseEnvFile(globalEnvContent);
         Object.assign(env, globalEnv);
       }
     } catch (error) {
       console.warn(`Warning: Could not load global .env file: ${error}`);
+    }
+
+    // 2. Load from system environment (highest priority in production)
+    for (const { key } of ENV_SCHEMA) {
+      const value = process.env[key];
+      if (value) {
+        env[key] = value;
+      }
     }
   }
 
@@ -138,32 +144,34 @@ export function loadEnvironment(): EnvironmentConfig {
  */
 function parseEnvFile(content: string): Record<string, string> {
   const env: Record<string, string> = {};
-  
-  for (const line of content.split('\n')) {
+
+  for (const line of content.split("\n")) {
     const trimmed = line.trim();
-    
+
     // Skip empty lines and comments
-    if (!trimmed || trimmed.startsWith('#')) {
+    if (!trimmed || trimmed.startsWith("#")) {
       continue;
     }
-    
-    const equalIndex = trimmed.indexOf('=');
+
+    const equalIndex = trimmed.indexOf("=");
     if (equalIndex === -1) {
       continue;
     }
-    
+
     const key = trimmed.slice(0, equalIndex).trim();
     let value = trimmed.slice(equalIndex + 1).trim();
-    
+
     // Remove quotes if present
-    if ((value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))) {
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
       value = value.slice(1, -1);
     }
-    
+
     env[key] = value;
   }
-  
+
   return env;
 }
 
@@ -178,13 +186,13 @@ export function setEnvironmentVariable(key: keyof EnvironmentConfig, value: stri
   }
 
   // Load existing .env content
-  let envContent = '';
+  let envContent = "";
   if (existsSync(configFiles.env)) {
-    envContent = readFileSync(configFiles.env, 'utf-8');
+    envContent = readFileSync(configFiles.env, "utf-8");
   }
 
   // Parse existing variables
-  const lines = envContent.split('\n');
+  const lines = envContent.split("\n");
   let found = false;
 
   // Update existing key or add new one
@@ -202,7 +210,7 @@ export function setEnvironmentVariable(key: keyof EnvironmentConfig, value: stri
   }
 
   // Write back to file
-  const newContent = lines.join('\n').trim() + '\n';
+  const newContent = lines.join("\n").trim() + "\n";
   writeFileSync(configFiles.env, newContent);
 }
 
@@ -214,15 +222,15 @@ export function removeEnvironmentVariable(key: keyof EnvironmentConfig): void {
     return;
   }
 
-  const envContent = readFileSync(configFiles.env, 'utf-8');
-  const lines = envContent.split('\n');
-  
-  const filteredLines = lines.filter(line => {
+  const envContent = readFileSync(configFiles.env, "utf-8");
+  const lines = envContent.split("\n");
+
+  const filteredLines = lines.filter((line) => {
     const trimmed = line.trim();
     return !trimmed.startsWith(`${key}=`);
   });
 
-  const newContent = filteredLines.join('\n').trim() + '\n';
+  const newContent = filteredLines.join("\n").trim() + "\n";
   writeFileSync(configFiles.env, newContent);
 }
 

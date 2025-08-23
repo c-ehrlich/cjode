@@ -65,8 +65,8 @@ export async function chatCommand(options: ChatOptions) {
                     const data = JSON.parse(line.slice(6));
                     
                     if (data.content) {
-                      // Stream the word with a space
-                      process.stdout.write(data.content + ' ');
+                      // Stream the content without adding spaces
+                      process.stdout.write(data.content);
                     }
                   } catch (parseError) {
                     // Ignore malformed JSON in stream
