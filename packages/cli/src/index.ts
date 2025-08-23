@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
+import 'dotenv/config';
 import { program } from 'commander';
 import { chatCommand } from './commands/chat.js';
 import { serverCommand } from './commands/server.js';
+import { envCommand } from './commands/env.js';
 
 program
   .name('cjode')
@@ -20,5 +22,15 @@ program
   .description('Server management')
   .option('--port <port>', 'Port to run server on', '3001')
   .action(serverCommand);
+
+program
+  .command('env')
+  .description('Environment variable management')
+  .option('--list', 'List all environment variables')
+  .option('--set <key>', 'Set an environment variable')
+  .option('--unset <key>', 'Remove an environment variable')
+  .option('--validate', 'Validate environment configuration')
+  .option('--setup', 'Interactive setup for environment variables')
+  .action(envCommand);
 
 program.parse();

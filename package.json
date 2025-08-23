@@ -7,6 +7,7 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
+    "dev:client": "node packages/cli/bin/cjode.js chat --server http://127.0.0.1:${PORT:-3001}",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",

@@ -1,5 +1,21 @@
+import 'dotenv/config';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+
+// Load environment variables from global config
+try {
+  const { loadEnvironment } = await import('@cjode/state');
+  const env = loadEnvironment();
+  
+  // Set environment variables that aren't already set
+  for (const [key, value] of Object.entries(env)) {
+    if (value && !process.env[key]) {
+      process.env[key] = value;
+    }
+  }
+} catch (error) {
+  console.warn('Could not load global environment configuration:', error);
+}
 
 const server = Fastify({
   logger: true,
@@ -96,11 +112,21 @@ server.post<{
 // Start server
 const start = async () => {
   try {
-    const port = parseInt(process.env.PORT || '3001');
-    const host = process.env.HOST || '127.0.0.1';
+    const port = parseInt(process.env.CJODE_SERVER_PORT || process.env.PORT || '3001');
+    const host = process.env.CJODE_SERVER_HOST || process.env.HOST || '127.0.0.1';
+
+    // Log environment status
+    const hasAnthropicKey = !!process.env.ANTHROPIC_API_KEY;
+    const hasOpenAIKey = !!process.env.OPENAI_API_KEY;
+    
+    server.log.info(`Environment: Anthropic API Key ${hasAnthropicKey ? '✓' : '✗'}, OpenAI API Key ${hasOpenAIKey ? '✓' : '✗'}`);
 
     await server.listen({ port, host });
     console.log(`🚀 Cjode server running on http://${host}:${port}`);
+    
+    if (!hasAnthropicKey && !hasOpenAIKey) {
+      console.log(`⚠️  No API keys configured. Run 'cjode env --setup' to configure.`);
+    }
   } catch (err) {
     server.log.error(err);
     process.exit(1);
