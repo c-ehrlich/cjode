@@ -8,6 +8,7 @@
   },
   "include": ["src/**/*"],
   "references": [
+    { "path": "../config" },
     { "path": "../core" },
     { "path": "../state" }
   ]
