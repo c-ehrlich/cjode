@@ -138,7 +138,7 @@ export function loadConfig(): AppConfig {
       }
 
       if (!workspaceRoot) {
-        // Fallback to process.cwd() if we can't find workspace root
+        // Fall back to process.cwd() if we can't find workspace root
         workspaceRoot = process.cwd();
       }
 
