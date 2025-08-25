@@ -1,13 +1,19 @@
 #!/usr/bin/env node
 
-import "dotenv/config";
 import { program } from "commander";
 
 import { chatCommand } from "./commands/chat.js";
 import { serverCommand } from "./commands/server.js";
 import { envCommand } from "./commands/env.js";
+import { initCommand } from "./commands/init.js";
 
 program.name("cjode").description("Agentic coding CLI").version("0.1.0");
+
+program
+  .command("init")
+  .description("Initialize cjode configuration")
+  .option("--overwrite", "Overwrite existing configuration")
+  .action(initCommand);
 
 program
   .command("chat")

@@ -8,7 +8,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsup",
-    "dev": "NODE_ENV=development nodemon --exec 'tsup && node dist/index.js' --ext ts --watch src",
+    "dev": "NODE_ENV=development tsx watch src/index.ts",
     "start": "node dist/index.js",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
@@ -17,7 +17,7 @@
   "dependencies": {
     "fastify": "^5.0.0",
     "@fastify/cors": "^10.0.0",
-    "dotenv": "^16.0.0",
+    "@cjode/config": "workspace:*",
     "@cjode/state": "workspace:*",
     "ai": "^5.0.0",
     "@ai-sdk/anthropic": "^2.0.0"
@@ -25,7 +25,6 @@
   "devDependencies": {
     "tsup": "^8.5.0",
     "typescript": "^5.7.0",
-    "@types/node": "^22.0.0",
-    "nodemon": "^3.0.0"
+    "@types/node": "^22.0.0"
   }
 }

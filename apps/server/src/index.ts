@@ -1,23 +1,11 @@
-import "dotenv/config";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import { streamText } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
+import { createAnthropic } from "@ai-sdk/anthropic";
+import { getConfig } from "@cjode/config";
 
-// Load environment variables from global config
-try {
-  const { loadEnvironment } = await import("@cjode/state");
-  const env = loadEnvironment();
-
-  // Set environment variables that aren't already set
-  for (const [key, value] of Object.entries(env as Record<string, string>)) {
-    if (value && !process.env[key]) {
-      process.env[key] = value;
-    }
-  }
-} catch (error) {
-  console.warn("Could not load global environment configuration:", error);
-}
+// Load validated configuration
+const config = getConfig();
 
 const server = Fastify({
   logger: true,
@@ -52,6 +40,8 @@ interface Message {
 const conversations = new Map<string, Message[]>();
 
 // Initialize Anthropic model
+console.log("tktk anthropic api key", config.ANTHROPIC_API_KEY);
+const anthropic = createAnthropic({ apiKey: config.ANTHROPIC_API_KEY });
 const model = anthropic("claude-sonnet-4-20250514");
 
 // Health check endpoint
@@ -104,9 +94,9 @@ server.post<{
   server.log.info(`Accept header: "${acceptHeader}"`);
 
   // Validate API key
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!config.ANTHROPIC_API_KEY) {
     reply.status(500).send({
-      error: "ANTHROPIC_API_KEY not configured. Run `cjode env --setup` to configure.",
+      error: "ANTHROPIC_API_KEY not configured. Run `cjode init` to configure.",
     });
     return;
   }
@@ -224,23 +214,25 @@ server.post<{
 // Start server
 const start = async () => {
   try {
-    const port = parseInt(process.env.CJODE_SERVER_PORT || process.env.PORT || "3001");
-    const host = process.env.CJODE_SERVER_HOST || process.env.HOST || "127.0.0.1";
+    const port = config.PORT || config.CJODE_SERVER_PORT;
+    const host = config.HOST || config.CJODE_SERVER_HOST;
 
     // Log environment status
-    const hasAnthropicKey = !!process.env.ANTHROPIC_API_KEY;
-    const hasOpenAIKey = !!process.env.OPENAI_API_KEY;
+    const hasAnthropicKey = !!config.ANTHROPIC_API_KEY;
+    const hasOpenAIKey = !!config.OPENAI_API_KEY;
 
     server.log.info(
       `Environment: Anthropic API Key ${hasAnthropicKey ? "✓" : "✗"}, OpenAI API Key ${hasOpenAIKey ? "✓" : "✗"}`,
     );
-    server.log.info("anthropic api key: " + process.env.ANTHROPIC_API_KEY);
+    server.log.info(
+      `Server config: port=${port}, host=${host}, model=${config.CJODE_DEFAULT_MODEL}`,
+    );
 
     await server.listen({ port, host });
     console.log(`🚀 Cjode server running on http://${host}:${port}`);
 
     if (!hasAnthropicKey && !hasOpenAIKey) {
-      console.log(`⚠️  No API keys configured. Run 'cjode env --setup' to configure.`);
+      console.log(`⚠️  No API keys configured. Run 'cjode init' to configure.`);
     }
   } catch (err) {
     server.log.error(err);
