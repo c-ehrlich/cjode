@@ -6,7 +6,8 @@
     "node": ">=20.9.0"
   },
   "bin": {
-    "cjode": "./bin/cjode.js"
+    "cjode": "./bin/cjode.js",
+    "cjode-dev": "./bin/cjode.js"
   },
   "main": "dist/index.js",
   "exports": {
@@ -22,6 +23,7 @@
   "dependencies": {
     "@cjode/config": "workspace:*",
     "@cjode/core": "workspace:*",
+    "@cjode/server": "workspace:*",
     "@cjode/state": "workspace:*",
     "commander": "^12.0.0",
     "chalk": "^5.0.0"

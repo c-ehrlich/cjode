@@ -93,6 +93,9 @@ importers:
       "@cjode/core":
         specifier: workspace:*
         version: link:../core
+      "@cjode/server":
+        specifier: workspace:*
+        version: link:../../apps/server
       "@cjode/state":
         specifier: workspace:*
         version: link:../state
