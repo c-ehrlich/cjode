@@ -186,24 +186,27 @@ describe("Config Package", () => {
     it("should detect development context in monorepo", async () => {
       // Set development environment
       process.env = {
-        NODE_ENV: 'development',
+        NODE_ENV: "development",
         // Don't include ANTHROPIC_API_KEY in process.env so it has to come from .env file
       };
 
       // Mock process.cwd() to return a test directory
       const originalCwd = process.cwd;
-      process.cwd = vi.fn().mockReturnValue('/Users/dev/cjode');
+      process.cwd = vi.fn().mockReturnValue("/Users/dev/cjode");
 
       // Mock file system to simulate .env file in current working directory
       mockExistsSync.mockImplementation((path) => {
         const pathStr = path.toString();
-        if (pathStr === '/Users/dev/cjode/.env') {
+        if (pathStr === "/Users/dev/cjode/.env") {
           return true;
         }
-        if (pathStr.includes('pnpm-workspace.yaml') && pathStr.includes('/Users/dev/cjode/pnpm-workspace.yaml')) {
+        if (
+          pathStr.includes("pnpm-workspace.yaml") &&
+          pathStr.includes("/Users/dev/cjode/pnpm-workspace.yaml")
+        ) {
           return true;
         }
-        if (pathStr.includes('package.json') && pathStr.includes('/Users/dev/cjode/package.json')) {
+        if (pathStr.includes("package.json") && pathStr.includes("/Users/dev/cjode/package.json")) {
           return true;
         }
         return false;
@@ -211,10 +214,10 @@ describe("Config Package", () => {
 
       mockReadFileSync.mockImplementation((path) => {
         const pathStr = path.toString();
-        if (pathStr === '/Users/dev/cjode/.env') {
+        if (pathStr === "/Users/dev/cjode/.env") {
           return "ANTHROPIC_API_KEY=dev-key\nCJODE_SERVER_PORT=3333";
         }
-        if (pathStr.includes('/Users/dev/cjode/package.json')) {
+        if (pathStr.includes("/Users/dev/cjode/package.json")) {
           return JSON.stringify({ name: "cjode", private: true });
         }
         return "";

@@ -44,18 +44,18 @@ function isDevContext(): boolean {
     try {
       // Walk up from current directory to find workspace root
       let searchDir = process.cwd();
-      
+
       while (searchDir !== "/" && searchDir !== ".") {
         const workspaceFile = join(searchDir, "pnpm-workspace.yaml");
         const packageFile = join(searchDir, "package.json");
-        
+
         if (existsSync(workspaceFile) && existsSync(packageFile)) {
           const pkg = JSON.parse(readFileSync(packageFile, "utf-8"));
           if (pkg.name === "cjode" && pkg.private) {
             return true;
           }
         }
-        
+
         searchDir = dirname(searchDir);
       }
     } catch {
@@ -118,11 +118,11 @@ export function loadConfig(): AppConfig {
       // Find the workspace root by walking up from cwd looking for pnpm-workspace.yaml
       let searchDir = process.cwd();
       let workspaceRoot = null;
-      
+
       while (searchDir !== "/" && searchDir !== ".") {
         const workspaceFile = join(searchDir, "pnpm-workspace.yaml");
         const packageFile = join(searchDir, "package.json");
-        
+
         if (existsSync(workspaceFile) && existsSync(packageFile)) {
           try {
             const pkg = JSON.parse(readFileSync(packageFile, "utf-8"));
@@ -136,7 +136,7 @@ export function loadConfig(): AppConfig {
         }
         searchDir = dirname(searchDir);
       }
-      
+
       if (!workspaceRoot) {
         // Fallback to process.cwd() if we can't find workspace root
         workspaceRoot = process.cwd();
