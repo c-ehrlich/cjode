@@ -13,7 +13,7 @@ program.name("cjode").description("Agentic coding CLI").version("0.1.0");
 // Default action - start full application (server + client)
 program
   .description("Start Cjode (server + client)")
-  .option("--port <port>", "Server port") 
+  .option("--port <port>", "Server port")
   .option("--host <host>", "Server host")
   .action(startCommand);
 

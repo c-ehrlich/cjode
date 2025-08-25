@@ -1,9 +1,9 @@
-import { spawn } from 'node:child_process';
-import { createRequire } from 'node:module';
-import { dirname, join } from 'node:path';
+import { spawn } from "node:child_process";
+import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
 
-import chalk from 'chalk';
-import { getConfig } from '@cjode/config';
+import chalk from "chalk";
+import { getConfig } from "@cjode/config";
 
 interface StartOptions {
   port?: string;
@@ -12,14 +12,14 @@ interface StartOptions {
 
 export async function startCommand(options: StartOptions = {}) {
   const config = getConfig();
-  
-  console.log(chalk.bold.blue('🚀 Starting Cjode in production mode...'));
+
+  console.log(chalk.bold.blue("🚀 Starting Cjode in production mode..."));
   console.log();
 
   // Validate configuration
   if (!config.ANTHROPIC_API_KEY) {
-    console.error(chalk.red('❌ No API key configured!'));
-    console.log(`Run ${chalk.cyan('cjode-dev init')} to set up your configuration.`);
+    console.error(chalk.red("❌ No API key configured!"));
+    console.log(`Run ${chalk.cyan("cjode-dev init")} to set up your configuration.`);
     process.exit(1);
   }
 
@@ -33,51 +33,51 @@ export async function startCommand(options: StartOptions = {}) {
   let serverPath: string;
   try {
     const require = createRequire(import.meta.url);
-    const serverPackageDir = dirname(require.resolve('@cjode/server/package.json'));
-    serverPath = join(serverPackageDir, 'dist', 'index.js');
+    const serverPackageDir = dirname(require.resolve("@cjode/server/package.json"));
+    serverPath = join(serverPackageDir, "dist", "index.js");
   } catch {
-    console.error(chalk.red('❌ Could not find server package'));
-    console.error('Make sure the project is built with: pnpm build');
+    console.error(chalk.red("❌ Could not find server package"));
+    console.error("Make sure the project is built with: pnpm build");
     process.exit(1);
   }
 
   // Start server in background
-  const serverProcess = spawn('node', [serverPath], {
+  const serverProcess = spawn("node", [serverPath], {
     env: {
       ...process.env,
-      NODE_ENV: 'production',
+      NODE_ENV: "production",
       CJODE_SERVER_PORT: port,
       CJODE_SERVER_HOST: host,
     },
-    stdio: ['pipe', 'pipe', 'pipe'],
+    stdio: ["pipe", "pipe", "pipe"],
   });
 
   let serverReady = false;
 
   // Handle server output
   if (serverProcess.stdout) {
-    serverProcess.stdout.on('data', (data) => {
+    serverProcess.stdout.on("data", (data) => {
       const output = data.toString();
-      if (output.includes('Cjode server running')) {
+      if (output.includes("Cjode server running")) {
         serverReady = true;
-        console.log(chalk.green('✅ Server started successfully'));
+        console.log(chalk.green("✅ Server started successfully"));
         console.log();
         startClient();
       }
       // Only show server errors, not all logs
-      if (output.includes('ERROR') || output.includes('WARN')) {
-        console.log(chalk.gray('[server]'), output.trim());
+      if (output.includes("ERROR") || output.includes("WARN")) {
+        console.log(chalk.gray("[server]"), output.trim());
       }
     });
   }
 
   if (serverProcess.stderr) {
-    serverProcess.stderr.on('data', (data) => {
-      console.error(chalk.red('[server error]'), data.toString().trim());
+    serverProcess.stderr.on("data", (data) => {
+      console.error(chalk.red("[server error]"), data.toString().trim());
     });
   }
 
-  serverProcess.on('exit', (code) => {
+  serverProcess.on("exit", (code) => {
     if (code !== 0 && code !== null) {
       console.error(chalk.red(`❌ Server exited with code ${code}`));
       process.exit(1);
@@ -86,57 +86,57 @@ export async function startCommand(options: StartOptions = {}) {
 
   // Start client after server is ready
   function startClient() {
-    console.log(chalk.bold('💬 Starting chat client...'));
-    console.log(chalk.gray('Press Ctrl+C to exit'));
-    console.log('─'.repeat(50));
+    console.log(chalk.bold("💬 Starting chat client..."));
+    console.log(chalk.gray("Press Ctrl+C to exit"));
+    console.log("─".repeat(50));
 
     // Use cjode-dev binary for the client
-    const clientProcess = spawn('cjode-dev', ['chat', '--server', serverUrl], {
+    const clientProcess = spawn("cjode-dev", ["chat", "--server", serverUrl], {
       env: {
         ...process.env,
-        NODE_ENV: 'production',
+        NODE_ENV: "production",
       },
-      stdio: 'inherit',
+      stdio: "inherit",
     });
 
     // Handle client exit
-    clientProcess.on('exit', (code) => {
+    clientProcess.on("exit", (code) => {
       console.log();
-      console.log(chalk.yellow('📡 Shutting down server...'));
-      
+      console.log(chalk.yellow("📡 Shutting down server..."));
+
       // Gracefully shutdown server
       if (serverProcess && !serverProcess.killed) {
-        serverProcess.kill('SIGTERM');
-        
+        serverProcess.kill("SIGTERM");
+
         // Force kill after timeout
         setTimeout(() => {
           if (!serverProcess.killed) {
-            console.log(chalk.yellow('⚠️  Force killing server...'));
-            serverProcess.kill('SIGKILL');
+            console.log(chalk.yellow("⚠️  Force killing server..."));
+            serverProcess.kill("SIGKILL");
           }
         }, 5000);
       }
-      
-      console.log(chalk.green('✅ Shutdown complete'));
+
+      console.log(chalk.green("✅ Shutdown complete"));
       process.exit(code || 0);
     });
   }
 
   // Handle process signals
-  process.on('SIGINT', () => {
+  process.on("SIGINT", () => {
     console.log();
-    console.log(chalk.yellow('📡 Shutting down...'));
-    
+    console.log(chalk.yellow("📡 Shutting down..."));
+
     if (serverProcess && !serverProcess.killed) {
-      serverProcess.kill('SIGTERM');
+      serverProcess.kill("SIGTERM");
     }
-    
+
     process.exit(0);
   });
 
-  process.on('SIGTERM', () => {
+  process.on("SIGTERM", () => {
     if (serverProcess && !serverProcess.killed) {
-      serverProcess.kill('SIGTERM');
+      serverProcess.kill("SIGTERM");
     }
     process.exit(0);
   });
@@ -144,9 +144,9 @@ export async function startCommand(options: StartOptions = {}) {
   // Wait for server startup
   setTimeout(() => {
     if (!serverReady) {
-      console.error(chalk.red('❌ Server failed to start within 10 seconds'));
+      console.error(chalk.red("❌ Server failed to start within 10 seconds"));
       if (serverProcess && !serverProcess.killed) {
-        serverProcess.kill('SIGKILL');
+        serverProcess.kill("SIGKILL");
       }
       process.exit(1);
     }
