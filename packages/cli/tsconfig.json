@@ -10,6 +10,7 @@
   "references": [
     { "path": "../config" },
     { "path": "../core" },
-    { "path": "../state" }
+    { "path": "../state" },
+    { "path": "../../apps/server" }
   ]
 }

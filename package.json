@@ -9,6 +9,7 @@
     "dev": "NODE_ENV=development turbo dev",
     "dev:client": "NODE_ENV=development node packages/cli/bin/cjode.js chat --server http://127.0.0.1:${PORT:-3001}",
     "dev:server": "NODE_ENV=development pnpm --filter=@cjode/server dev",
+    "dev:install": "bash scripts/dev-install.sh",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
