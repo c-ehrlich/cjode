@@ -1,11 +1,20 @@
 {
-  "name": "@cjode/server",
-  "version": "0.1.0",
+  "name": "@c-ehrlich/cjode-server",
+  "version": "0.8.3",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "engines": {
     "node": ">=20.9.0"
   },
+  "bin": {
+    "cjode-server": "./dist/index.js"
+  },
   "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "NODE_ENV=development tsx watch src/index.ts",
@@ -20,7 +29,8 @@
     "@cjode/config": "workspace:*",
     "@cjode/state": "workspace:*",
     "ai": "^5.0.0",
-    "@ai-sdk/anthropic": "^2.0.0"
+    "@ai-sdk/anthropic": "^2.0.0",
+    "commander": "^12.0.0"
   },
   "devDependencies": {
     "tsup": "^8.5.0",

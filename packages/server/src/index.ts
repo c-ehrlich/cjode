@@ -1,8 +1,19 @@
+#!/usr/bin/env node
+
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import { streamText } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { getConfig } from "@cjode/config";
+import { program } from "commander";
+
+// Parse CLI arguments
+program
+  .option("--port <port>", "Server port", "3001")
+  .option("--host <host>", "Server host", "localhost")
+  .parse();
+
+const options = program.opts();
 
 // Load validated configuration
 const config = getConfig();
@@ -213,8 +224,8 @@ server.post<{
 // Start server
 const start = async () => {
   try {
-    const port = config.PORT || config.CJODE_SERVER_PORT;
-    const host = config.HOST || config.CJODE_SERVER_HOST;
+    const port = process.env.CJODE_SERVER_PORT || options.port || config.CJODE_SERVER_PORT;
+    const host = process.env.CJODE_SERVER_HOST || options.host || config.CJODE_SERVER_HOST;
 
     // Log environment status
     const hasAnthropicKey = !!config.ANTHROPIC_API_KEY;

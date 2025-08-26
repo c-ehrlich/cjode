@@ -11,6 +11,6 @@
     { "path": "../config" },
     { "path": "../core" },
     { "path": "../state" },
-    { "path": "../../apps/server" }
+    { "path": "../../packages/server" }
   ]
 }

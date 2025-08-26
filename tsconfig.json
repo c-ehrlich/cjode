@@ -19,7 +19,7 @@
     { "path": "./packages/core" },
     { "path": "./packages/state" },
     { "path": "./packages/cli" },
-    { "path": "./apps/server" }
+    { "path": "./packages/server" }
   ],
   "files": []
 }

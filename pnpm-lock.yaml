@@ -54,51 +54,11 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@22.17.2)(tsx@4.20.5)
 
-  apps/server:
-    dependencies:
-      "@ai-sdk/anthropic":
-        specifier: ^2.0.0
-        version: 2.0.6(zod@3.25.76)
-      "@cjode/config":
-        specifier: workspace:*
-        version: link:../../packages/config
-      "@cjode/state":
-        specifier: workspace:*
-        version: link:../../packages/state
-      "@fastify/cors":
-        specifier: ^10.0.0
-        version: 10.1.0
-      ai:
-        specifier: ^5.0.0
-        version: 5.0.22(zod@3.25.76)
-      fastify:
-        specifier: ^5.0.0
-        version: 5.5.0
-    devDependencies:
-      "@types/node":
-        specifier: ^22.0.0
-        version: 22.17.2
-      tsup:
-        specifier: ^8.5.0
-        version: 8.5.0(tsx@4.20.5)(typescript@5.9.2)
-      typescript:
-        specifier: ^5.7.0
-        version: 5.9.2
-
   packages/cli:
     dependencies:
-      "@cjode/config":
+      "@c-ehrlich/cjode-server":
         specifier: workspace:*
-        version: link:../config
-      "@cjode/core":
-        specifier: workspace:*
-        version: link:../core
-      "@cjode/server":
-        specifier: workspace:*
-        version: link:../../apps/server
-      "@cjode/state":
-        specifier: workspace:*
-        version: link:../state
+        version: link:../server
       chalk:
         specifier: ^5.0.0
         version: 5.6.0
@@ -106,6 +66,15 @@ importers:
         specifier: ^12.0.0
         version: 12.1.0
     devDependencies:
+      "@cjode/config":
+        specifier: workspace:*
+        version: link:../config
+      "@cjode/core":
+        specifier: workspace:*
+        version: link:../core
+      "@cjode/state":
+        specifier: workspace:*
+        version: link:../state
       tsup:
         specifier: ^8.5.0
         version: 8.5.0(tsx@4.20.5)(typescript@5.9.2)
@@ -144,6 +113,40 @@ importers:
       "@types/uuid":
         specifier: ^10.0.0
         version: 10.0.0
+      tsup:
+        specifier: ^8.5.0
+        version: 8.5.0(tsx@4.20.5)(typescript@5.9.2)
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.2
+
+  packages/server:
+    dependencies:
+      "@ai-sdk/anthropic":
+        specifier: ^2.0.0
+        version: 2.0.6(zod@3.25.76)
+      "@cjode/config":
+        specifier: workspace:*
+        version: link:../config
+      "@cjode/state":
+        specifier: workspace:*
+        version: link:../state
+      "@fastify/cors":
+        specifier: ^10.0.0
+        version: 10.1.0
+      ai:
+        specifier: ^5.0.0
+        version: 5.0.22(zod@3.25.76)
+      commander:
+        specifier: ^12.0.0
+        version: 12.1.0
+      fastify:
+        specifier: ^5.0.0
+        version: 5.5.0
+    devDependencies:
+      "@types/node":
+        specifier: ^22.0.0
+        version: 22.17.2
       tsup:
         specifier: ^8.5.0
         version: 8.5.0(tsx@4.20.5)(typescript@5.9.2)
