@@ -67,10 +67,10 @@ jobs:
         run: |
           # Get the current version from root package.json
           VERSION=$(node -p "require('./package.json').version")
-          
+
           # Replace workspace:* with actual version in CLI package.json
           sed -i.bak "s/\"@c-ehrlich\/cjode-server\": \"workspace:\*\"/\"@c-ehrlich\/cjode-server\": \"$VERSION\"/" packages/cli/package.json
-          
+
           # Publish both packages with synchronized versions
           cd packages/cli && npm publish
           cd ../server && npm publish

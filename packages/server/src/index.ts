@@ -9,8 +9,8 @@ import { program } from "commander";
 
 // Parse CLI arguments
 program
-  .option('--port <port>', 'Server port', '3001')
-  .option('--host <host>', 'Server host', 'localhost')
+  .option("--port <port>", "Server port", "3001")
+  .option("--host <host>", "Server host", "localhost")
   .parse();
 
 const options = program.opts();
