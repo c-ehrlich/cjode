@@ -87,18 +87,6 @@ importers:
 
   packages/cli:
     dependencies:
-      "@cjode/config":
-        specifier: workspace:*
-        version: link:../config
-      "@cjode/core":
-        specifier: workspace:*
-        version: link:../core
-      "@cjode/server":
-        specifier: workspace:*
-        version: link:../../apps/server
-      "@cjode/state":
-        specifier: workspace:*
-        version: link:../state
       chalk:
         specifier: ^5.0.0
         version: 5.6.0
