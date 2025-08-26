@@ -51,7 +51,7 @@ function isDevContext(): boolean {
 
         if (existsSync(workspaceFile) && existsSync(packageFile)) {
           const pkg = JSON.parse(readFileSync(packageFile, "utf-8"));
-          if (pkg.name === "cjode" && pkg.private) {
+          if (pkg.name === "cjode" || pkg.name === "@c-ehrlich/cjode") {
             return true;
           }
         }
@@ -126,7 +126,7 @@ export function loadConfig(): AppConfig {
         if (existsSync(workspaceFile) && existsSync(packageFile)) {
           try {
             const pkg = JSON.parse(readFileSync(packageFile, "utf-8"));
-            if (pkg.name === "cjode" && pkg.private) {
+            if (pkg.name === "cjode" || pkg.name === "@c-ehrlich/cjode") {
               workspaceRoot = searchDir;
               break;
             }
