@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/c-ehrlich/cjode/compare/v0.8.1...v0.8.2) (2025-08-26)
+
+
+### Bug Fixes
+
+* include deps in bundle, hopefully for real this time ([#24](https://github.com/c-ehrlich/cjode/issues/24)) ([b197c6b](https://github.com/c-ehrlich/cjode/commit/b197c6b09df3d6fc5457192389ccdbbf290f68f9))
+
 ## [0.8.1](https://github.com/c-ehrlich/cjode/compare/v0.8.0...v0.8.1) (2025-08-26)
 
 
