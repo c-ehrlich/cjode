@@ -24,10 +24,6 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@cjode/config": "workspace:*",
-    "@cjode/core": "workspace:*",
-    "@cjode/server": "workspace:*",
-    "@cjode/state": "workspace:*",
     "commander": "^12.0.0",
     "chalk": "^5.0.0"
   },
