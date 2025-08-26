@@ -1,6 +1,4 @@
 import { spawn } from "node:child_process";
-import { createRequire } from "node:module";
-import { dirname, join } from "node:path";
 
 import chalk from "chalk";
 import { getConfig } from "@cjode/config";
@@ -29,20 +27,8 @@ export async function startCommand(options: StartOptions = {}) {
 
   console.log(`📡 Starting server on ${chalk.cyan(serverUrl)}...`);
 
-  // Find the server executable
-  let serverPath: string;
-  try {
-    const require = createRequire(import.meta.url);
-    const serverPackageDir = dirname(require.resolve("@cjode/server/package.json"));
-    serverPath = join(serverPackageDir, "dist", "index.js");
-  } catch {
-    console.error(chalk.red("❌ Could not find server package"));
-    console.error("Make sure the project is built with: pnpm build");
-    process.exit(1);
-  }
-
-  // Start server in background
-  const serverProcess = spawn("node", [serverPath], {
+  // Start server using binary
+  const serverProcess = spawn("cjode-server", ["--port", port, "--host", host], {
     env: {
       ...process.env,
       NODE_ENV: "production",

@@ -27,7 +27,7 @@ export async function serverCommand(options: ServerOptions) {
   } catch {
     console.log(chalk.yellow("⚠️  Server not built, building now..."));
 
-    const buildProcess = spawn("pnpm", ["build", "--filter=@cjode/server"], {
+    const buildProcess = spawn("pnpm", ["build", "--filter=@c-ehrlich/cjode-server"], {
       stdio: "inherit",
       shell: true,
     });
