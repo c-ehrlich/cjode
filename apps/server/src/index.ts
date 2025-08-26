@@ -40,7 +40,6 @@ interface Message {
 const conversations = new Map<string, Message[]>();
 
 // Initialize Anthropic model
-console.log("tktk anthropic api key", config.ANTHROPIC_API_KEY);
 const anthropic = createAnthropic({ apiKey: config.ANTHROPIC_API_KEY });
 const model = anthropic("claude-sonnet-4-20250514");
 
