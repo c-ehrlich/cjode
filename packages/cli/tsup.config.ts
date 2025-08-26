@@ -1,13 +1,13 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.ts"],
+  entry: ["src/**/*.ts"],
   format: ["esm"],
   target: "node20",
   clean: true,
   dts: false, // CLI doesn't need type definitions
-  external: [], // Bundle all dependencies for CLI
+  // Don't bundle anything - let npm handle dependencies
   splitting: false,
   sourcemap: true,
-  bundle: true,
+  bundle: false,
 });
