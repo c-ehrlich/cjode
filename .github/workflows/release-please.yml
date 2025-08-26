@@ -31,23 +31,24 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      # Install pnpm first so setup-node's pnpm cache can run
+      - uses: pnpm/action-setup@v4
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          version: 8.15.0
+          run_install: false
+
       - uses: actions/setup-node@v4
         if: ${{ steps.release.outputs.release_created }}
         with:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
           cache: "pnpm"
+          cache-dependency-path: "pnpm-lock.yaml"
 
-      - uses: pnpm/action-setup@v4
-        if: ${{ steps.release.outputs.release_created }}
-        with:
-          version: 8.15.0
-
-      # Ensure pnpm sees the token (belt-and-suspenders)
       - name: Configure npm auth
         if: ${{ steps.release.outputs.release_created }}
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" >> ~/.npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" >> ~/.npmrc
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -63,6 +64,4 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          pnpm publish --no-git-checks --access public # drop --access if not scoped
-          # add --provenance if you want npm provenance
+        run: pnpm publish --no-git-checks
