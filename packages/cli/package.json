@@ -28,6 +28,10 @@
     "chalk": "^5.0.0"
   },
   "devDependencies": {
+    "@cjode/config": "workspace:*",
+    "@cjode/core": "workspace:*",
+    "@cjode/server": "workspace:*",
+    "@cjode/state": "workspace:*",
     "tsup": "^8.5.0",
     "typescript": "^5.7.0"
   }
