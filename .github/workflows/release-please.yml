@@ -1,4 +1,5 @@
 name: Release Please
+
 on:
   push:
     branches: [main]
@@ -6,11 +7,15 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  id-token: write
+
+concurrency:
+  group: release-please
+  cancel-in-progress: true
 
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
@@ -23,6 +28,7 @@ jobs:
         with:
           ref: ${{ steps.release.outputs.tag_name }}
           fetch-depth: 0
+          persist-credentials: false
 
       - uses: actions/setup-node@v4
         if: ${{ steps.release.outputs.release_created }}
