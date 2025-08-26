@@ -3,7 +3,6 @@
   "include-component-in-tag": false,
   "include-v-in-tag": true,
   "skip-github-release": false,
-  "skip-labeling": true,
   "packages": {
     ".": {
       "package-name": "cjode"
