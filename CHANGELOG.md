@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/c-ehrlich/cjode/compare/v0.7.0...v0.8.0) (2025-08-26)
+
+
+### Features
+
+* rename to @c-ehrlich/cjode (FOR NOW) and update readme ([#20](https://github.com/c-ehrlich/cjode/issues/20)) ([91c8c91](https://github.com/c-ehrlich/cjode/commit/91c8c9176ead0ea9b0a2aa35eb37527c07da1e39))
+
 ## [0.7.0](https://github.com/c-ehrlich/cjode/compare/v0.6.0...v0.7.0) (2025-08-26)
 
 
