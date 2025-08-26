@@ -1,6 +1,6 @@
 {
   "name": "@c-ehrlich/cjode",
-  "version": "0.8.3",
+  "version": "0.8.7",
   "publishConfig": {
     "access": "public"
   },
