@@ -14,8 +14,7 @@ export async function serverCommand(options: ServerOptions) {
   // Get the path to the server package
   const currentFile = fileURLToPath(import.meta.url);
   const currentDir = dirname(currentFile);
-  // From packages/cli/dist, go up to monorepo root, then to apps/server
-  const serverPath = join(currentDir, "../../../apps/server");
+  const serverPath = join(currentDir, "../../../packages/server");
 
   console.log(chalk.gray(`Current file: ${currentFile}`));
   console.log(chalk.gray(`Current dir: ${currentDir}`));
