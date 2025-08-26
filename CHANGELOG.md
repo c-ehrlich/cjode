@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.5](https://github.com/c-ehrlich/cjode/compare/v0.8.4...v0.8.5) (2025-08-26)
+
+
+### Bug Fixes
+
+* change bundling to hopefully resolve npm build ([#30](https://github.com/c-ehrlich/cjode/issues/30)) ([4d1a926](https://github.com/c-ehrlich/cjode/commit/4d1a9260bebd68f15d8fb30915fb1e1715618c45))
+
 ## [0.8.4](https://github.com/c-ehrlich/cjode/compare/v0.8.3...v0.8.4) (2025-08-26)
 
 
