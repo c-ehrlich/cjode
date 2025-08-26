@@ -6,7 +6,8 @@ export default defineConfig({
   target: "node20",
   clean: true,
   dts: false, // CLI doesn't need type definitions
-  external: ["@cjode/core", "@cjode/state"],
+  external: [], // Bundle all dependencies for CLI
   splitting: false,
   sourcemap: true,
+  bundle: true,
 });
