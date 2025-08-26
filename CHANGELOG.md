@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/c-ehrlich/cjode/compare/v0.6.0...v0.7.0) (2025-08-26)
+
+
+### Features
+
+* release to npm (attempt 7) ([#18](https://github.com/c-ehrlich/cjode/issues/18)) ([a3b436a](https://github.com/c-ehrlich/cjode/commit/a3b436a3a36b0a86a3a0a00b285c3290d54b518d))
+
 ## [0.6.0](https://github.com/c-ehrlich/cjode/compare/v0.5.0...v0.6.0) (2025-08-26)
 
 
