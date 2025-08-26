@@ -1,7 +1,21 @@
 {
   "name": "cjode",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.2.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "packages/cli/dist/**",
+    "packages/cli/bin/**",
+    "packages/*/dist/**",
+    "README.md",
+    "LICENSE"
+  ],
+  "bin": {
+    "cjode": "./packages/cli/bin/cjode.js"
+  },
+  "main": "./packages/cli/dist/index.js",
   "packageManager": "pnpm@8.15.0",
   "type": "module",
   "scripts": {
