@@ -5,7 +5,7 @@
   "skip-github-release": false,
   "packages": {
     ".": {
-      "package-name": "cjode"
+      "package-name": "@c-ehrlich/cjode"
     }
   }
 }
