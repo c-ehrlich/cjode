@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.4](https://github.com/c-ehrlich/cjode/compare/v0.8.3...v0.8.4) (2025-08-26)
+
+
+### Bug Fixes
+
+* release on changes to non-cli packages as well ([#28](https://github.com/c-ehrlich/cjode/issues/28)) ([fc64deb](https://github.com/c-ehrlich/cjode/commit/fc64deb2f89d3986b7d57647317e21f726c0f953))
+
 ## [0.8.2](https://github.com/c-ehrlich/cjode/compare/v0.8.1...v0.8.2) (2025-08-26)
 
 
