@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.6](https://github.com/c-ehrlich/cjode/compare/v0.8.5...v0.8.6) (2025-08-26)
+
+
+### Bug Fixes
+
+* remove workspace from lockfile ([#32](https://github.com/c-ehrlich/cjode/issues/32)) ([f222c17](https://github.com/c-ehrlich/cjode/commit/f222c17fbfd5fac076276782060ac1edb0abe3e0))
+
 ## [0.8.5](https://github.com/c-ehrlich/cjode/compare/v0.8.4...v0.8.5) (2025-08-26)
 
 
