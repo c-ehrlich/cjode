@@ -41,7 +41,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         if: ${{ steps.release.outputs.release_created }}
         with:
-          version: 8
+          version: 8.15.0
 
       # Ensure pnpm sees the token (belt-and-suspenders)
       - name: Configure npm auth
