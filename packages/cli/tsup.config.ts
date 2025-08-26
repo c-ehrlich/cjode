@@ -6,8 +6,8 @@ export default defineConfig({
   target: "node20",
   clean: true,
   dts: false, // CLI doesn't need type definitions
-  // Don't bundle anything - let npm handle dependencies
   splitting: false,
   sourcemap: true,
-  bundle: false,
+  bundle: true,
+  external: ["commander", "chalk"], // Keep external deps external
 });
