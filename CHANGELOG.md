@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/c-ehrlich/cjode/compare/v0.5.0...v0.6.0) (2025-08-26)
+
+
+### Features
+
+* publish to npm, attempt 6 ([#16](https://github.com/c-ehrlich/cjode/issues/16)) ([bb0516e](https://github.com/c-ehrlich/cjode/commit/bb0516e1cfcd8ec56b99ba8070baf26db5b7bd25))
+
 ## [0.5.0](https://github.com/c-ehrlich/cjode/compare/v0.4.0...v0.5.0) (2025-08-26)
 
 
