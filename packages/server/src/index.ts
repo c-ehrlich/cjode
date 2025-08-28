@@ -7,6 +7,9 @@ import { createAnthropic } from "@ai-sdk/anthropic";
 import { getConfig } from "@cjode/config";
 import { program } from "commander";
 
+import { readTool } from "./tools/read.tool";
+import { listDirTool } from "./tools/list-dir.tool";
+
 // Parse CLI arguments
 program
   .option("--port <port>", "Server port", "3001")
@@ -150,6 +153,10 @@ server.post<{
         messages: conversationHistory,
         temperature: 0.7,
         maxOutputTokens: 2000,
+        tools: {
+          listDirTool,
+          readTool,
+        },
       });
 
       let fullResponse = "";
