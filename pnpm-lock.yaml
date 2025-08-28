@@ -125,12 +125,6 @@ importers:
       "@ai-sdk/anthropic":
         specifier: ^2.0.0
         version: 2.0.6(zod@3.25.76)
-      "@cjode/config":
-        specifier: workspace:*
-        version: link:../config
-      "@cjode/state":
-        specifier: workspace:*
-        version: link:../state
       "@fastify/cors":
         specifier: ^10.0.0
         version: 10.1.0
@@ -144,6 +138,12 @@ importers:
         specifier: ^5.0.0
         version: 5.5.0
     devDependencies:
+      "@cjode/config":
+        specifier: workspace:*
+        version: link:../config
+      "@cjode/state":
+        specifier: workspace:*
+        version: link:../state
       "@types/node":
         specifier: ^22.0.0
         version: 22.17.2

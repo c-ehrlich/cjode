@@ -8,4 +8,6 @@ export default defineConfig({
   dts: false,
   splitting: false,
   sourcemap: true,
+  bundle: true,
+  external: ["fastify", "@fastify/cors", "ai", "@ai-sdk/anthropic", "commander"], // Keep external deps external, bundle workspace deps
 });
