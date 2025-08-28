@@ -12,33 +12,38 @@ export const listDirTool = tool({
   }),
   outputSchema: z.object({
     path: z.string().describe("Absolute path to the directory that was listed"),
-    entries: z.array(
-      z.object({
-        name: z.string().describe("Name of the file or directory"),
-        type: z.enum(["file", "directory"]).describe("Type of the entry"),
-        size: z.number().optional().describe("Size in bytes (for files only)"),
-      }),
-    ).describe("List of files and directories in the path"),
+    entries: z
+      .array(
+        z.object({
+          name: z.string().describe("Name of the file or directory"),
+          type: z.enum(["file", "directory"]).describe("Type of the entry"),
+          size: z.number().optional().describe("Size in bytes (for files only)"),
+        }),
+      )
+      .describe("List of files and directories in the path"),
     totalEntries: z.number().describe("Total number of entries in the directory"),
   }),
   execute: async ({ path, ignore }) => {
     try {
       const entries = readdirSync(path);
-      
-      const filteredEntries = ignore 
-        ? entries.filter((name) => !ignore.some((pattern) => {
-            const regex = new RegExp(pattern.replace(/\*/g, '.*').replace(/\?/g, '.'));
-            return regex.test(name);
-          }))
+
+      const filteredEntries = ignore
+        ? entries.filter(
+            (name) =>
+              !ignore.some((pattern) => {
+                const regex = new RegExp(pattern.replace(/\*/g, ".*").replace(/\?/g, "."));
+                return regex.test(name);
+              }),
+          )
         : entries;
-      
+
       const entryDetails = filteredEntries.map((name) => {
         const fullPath = join(path, name);
         const stats = statSync(fullPath);
-        
+
         return {
           name,
-          type: stats.isDirectory() ? "directory" as const : "file" as const,
+          type: stats.isDirectory() ? ("directory" as const) : ("file" as const),
           size: stats.isFile() ? stats.size : undefined,
         };
       });

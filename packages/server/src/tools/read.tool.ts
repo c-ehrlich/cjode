@@ -35,7 +35,7 @@ export const readTool = tool({
 
       if (read_range) {
         const [startLine, endLine] = read_range;
-        const start = Math.max(0, startLine - 1); // Convert to 0-indexed
+        const start = Math.max(0, startLine - 1);
         const end = Math.min(lines.length, endLine);
         const selectedLines = lines.slice(start, end);
 
@@ -44,7 +44,7 @@ export const readTool = tool({
           content: selectedLines.join("\n"),
           totalLines: lines.length,
           readRange: [startLine, endLine],
-          actualRange: [start + 1, end], // Convert back to 1-indexed for response
+          actualRange: [start + 1, end],
         };
       }
 
@@ -54,10 +54,9 @@ export const readTool = tool({
         totalLines: lines.length,
       };
     } catch (error) {
-      return {
-        path,
-        error: `Failed to read file: ${error instanceof Error ? error.message : "Unknown error"}`,
-      };
+      throw new Error(
+        `Failed to read file: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   },
 });
