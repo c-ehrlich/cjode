@@ -33,29 +33,10 @@ pnpm install --frozen-lockfile
 echo "▶ building all packages"
 pnpm run build          # turbo build ➜ tsup ➜ dist/
 
-# Get actual package versions
-SERVER_VERSION=$(node -p "require('./packages/server/package.json').version")
-CLI_PKG="packages/cli/package.json"
-
-echo "▶ patching CLI package.json dependency (workspace:* → $SERVER_VERSION)"
-# Patch CLI package - replace server dependency with actual server version
-if command -v jq >/dev/null 2>&1; then
-  tmp=$(mktemp)
-  jq --arg v "$SERVER_VERSION" '.dependencies["@c-ehrlich/cjode-server"]=$v' "$CLI_PKG" > "$tmp"
-  mv "$tmp" "$CLI_PKG"
-else
-  # Fallback to sed if jq not available (matches GitHub workflow exactly)  
-  sed -i.bak "s/\"@c-ehrlich\/cjode-server\": \"workspace:\*\"/\"@c-ehrlich\/cjode-server\": \"$SERVER_VERSION\"/" "$CLI_PKG"
-  rm -f "$CLI_PKG.bak"
-fi
-
-echo "▶ packing publishable tarballs"
+echo "▶ packing publishable tarballs (pnpm auto-resolves workspace:*)"
 mkdir -p "$DIST_DIR"
-pushd packages/cli    > /dev/null;   npm pack --pack-destination "$ROOT/$DIST_DIR";    popd > /dev/null
-pushd packages/server > /dev/null;   npm pack --pack-destination "$ROOT/$DIST_DIR";    popd > /dev/null
-
-echo "▶ restoring workspace:* pointer (so git diff is clean)"
-git checkout -- "$CLI_PKG"
+pushd packages/cli    > /dev/null;   pnpm pack --pack-destination "$ROOT/$DIST_DIR";    popd > /dev/null
+pushd packages/server > /dev/null;   pnpm pack --pack-destination "$ROOT/$DIST_DIR";    popd > /dev/null
 
 echo -e "\n✅  Finished. Tarballs are in $DIST_DIR/"
 ls -1 "$DIST_DIR"

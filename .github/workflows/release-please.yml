@@ -65,12 +65,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          # Get the current version (both packages should have same version from release-please)
-          VERSION=$(node -p "require('./packages/cli/package.json').version")
-
-          # Replace workspace:* with actual version in CLI package.json
-          sed -i.bak "s/\"@c-ehrlich\/cjode-server\": \"workspace:\*\"/\"@c-ehrlich\/cjode-server\": \"$VERSION\"/" packages/cli/package.json
-
-          # Publish both packages (versions already updated by release-please)
-          cd packages/cli && npm publish
-          cd ../server && npm publish
+          # Use pnpm's built-in workspace dependency resolution
+          # This automatically converts workspace:* to actual versions
+          pnpm publish -r --access public --no-git-checks
