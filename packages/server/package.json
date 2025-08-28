@@ -26,13 +26,13 @@
   "dependencies": {
     "fastify": "^5.0.0",
     "@fastify/cors": "^10.0.0",
-    "@cjode/config": "workspace:*",
-    "@cjode/state": "workspace:*",
     "ai": "^5.0.0",
     "@ai-sdk/anthropic": "^2.0.0",
     "commander": "^12.0.0"
   },
   "devDependencies": {
+    "@cjode/config": "workspace:*",
+    "@cjode/state": "workspace:*",
     "tsup": "^8.5.0",
     "typescript": "^5.7.0",
     "@types/node": "^22.0.0"

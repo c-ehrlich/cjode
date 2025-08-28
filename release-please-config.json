@@ -4,12 +4,11 @@
   "include-v-in-tag": true,
   "skip-github-release": false,
   "packages": {
-    ".": {
-      "package-name": "@c-ehrlich/cjode",
-      "extra-files": [
-        "packages/cli/package.json",
-        "packages/server/package.json"
-      ]
+    "packages/cli": {
+      "package-name": "@c-ehrlich/cjode"
+    },
+    "packages/server": {
+      "package-name": "@c-ehrlich/cjode-server"
     }
   }
 }
