@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.8.7](https://github.com/c-ehrlich/cjode/compare/v0.8.6...v0.8.7) (2025-08-26)
+
+
+### Bug Fixes
+
+* include package package.json's in rp ([dce2478](https://github.com/c-ehrlich/cjode/commit/dce247870d5a0595d1ed3b9164d512ca284cf4c1))
+* include stuff outside of the packages in rp ([#35](https://github.com/c-ehrlich/cjode/issues/35)) ([dce2478](https://github.com/c-ehrlich/cjode/commit/dce247870d5a0595d1ed3b9164d512ca284cf4c1))
+* server version not updated by release-please ([#34](https://github.com/c-ehrlich/cjode/issues/34)) ([9429236](https://github.com/c-ehrlich/cjode/commit/9429236f9f948a01981fa2ecf4bd92ff83ad1878))
+
 ## [0.8.6](https://github.com/c-ehrlich/cjode/compare/v0.8.5...v0.8.6) (2025-08-26)
 
 
