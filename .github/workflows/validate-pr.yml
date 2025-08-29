@@ -1,0 +1,28 @@
+name: Validate PR
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch: # Allow manual testing
+
+jobs:
+  validate-bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r run build
+      - name: Validate bundle
+        run: |
+          cd packages/cli
+          npm pack --dry-run > /tmp/pack.txt
+          grep -q "node_modules/@cjode" /tmp/pack.txt && echo "Internal packages leaked" && exit 1
+          grep -q "node_modules/@c-ehrlich/cjode-server" /tmp/pack.txt && echo "Server leaked" && exit 1
+          node dist/cjode.js --help > /tmp/cli_output.txt 2>&1 || (echo "CLI failed:" && cat /tmp/cli_output.txt && exit 1)
+          npx publint
