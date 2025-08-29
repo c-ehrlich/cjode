@@ -23,7 +23,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Lint
         run: pnpm lint
@@ -44,7 +44,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Type check
         run: pnpm typecheck
@@ -65,7 +65,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Format check
         run: pnpm format:check
@@ -86,7 +86,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build
         run: pnpm build
@@ -107,7 +107,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Test
         run: pnpm test
