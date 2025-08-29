@@ -1,9 +1,7 @@
 {
   "name": "@c-ehrlich/cjode-server",
   "version": "0.10.0",
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "type": "module",
   "engines": {
     "node": ">=20.9.0"

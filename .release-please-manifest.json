@@ -1,1 +1,7 @@
-{ ".": "0.10.0" }
+{
+  "packages/cli": "0.10.0",
+  "packages/server": "0.10.0",
+  "packages/config": "0.1.0",
+  "packages/core": "0.1.0", 
+  "packages/state": "0.1.0"
+}
