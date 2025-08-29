@@ -1,7 +1,7 @@
 {
-  "packages/cli": "0.10.8",
-  "packages/server": "0.10.8",
-  "packages/config": "0.10.8",
-  "packages/core": "0.10.8",
-  "packages/state": "0.10.8"
+  "packages/cli": "0.10.9",
+  "packages/server": "0.10.9",
+  "packages/config": "0.10.9",
+  "packages/core": "0.10.9",
+  "packages/state": "0.10.9"
 }
