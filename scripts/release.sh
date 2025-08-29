@@ -282,18 +282,41 @@ if confirm "Publish CLI package to npm?"; then
         export NODE_AUTH_TOKEN="$NPM_TOKEN"
     fi
     
+    # Verify npm authentication
+    print_status "Verifying npm authentication..."
+    if ! npm whoami > /dev/null 2>&1; then
+        print_error "Not authenticated with npm. Check your NPM_TOKEN"
+        print_error "Current token starts with: ${NPM_TOKEN:0:8}..."
+        print_error "Get a new token from: https://www.npmjs.com/settings/tokens"
+        exit 1
+    fi
+    
+    npm_user=$(npm whoami)
+    print_status "Authenticated as npm user: $npm_user"
+    
+    # Check if user has publish permissions for this package
+    if ! npm access list packages | grep -q "@c-ehrlich/cjode" > /dev/null 2>&1; then
+        print_warning "Cannot verify publish permissions for @c-ehrlich/cjode"
+        print_status "Make sure user '$npm_user' has publish access to @c-ehrlich/cjode"
+        if ! confirm "Continue with publish attempt?"; then
+            print_status "Publish cancelled"
+            cd ../..
+            exit 0
+        fi
+    fi
+    
     # Use provenance only in CI environments that support it
     if [[ -n "$GITHUB_ACTIONS" ]]; then
-        npm publish --provenance
+        npm publish --provenance --access public
     else
-        npm publish
+        npm publish --access public
     fi
     cd ../..
     print_success "Published to npm!"
 else
     print_warning "Skipped npm publish. To publish manually:"
-    echo "  cd packages/cli"
-    echo "  NODE_AUTH_TOKEN=\$NPM_TOKEN npm publish"
+    echo "  cd packages/cli"  
+    echo "  NODE_AUTH_TOKEN=\$NPM_TOKEN npm publish --access public"
 fi
 
 # Create GitHub release
