@@ -10,7 +10,11 @@ export const writeFileTool = tool({
   inputSchema: z.object({
     path: z.string().describe("Absolute path to the file to write"),
     content: z.string().describe("Content to write to the file"),
-    createDirs: z.boolean().optional().default(true).describe("Create parent directories if they don't exist"),
+    createDirs: z
+      .boolean()
+      .optional()
+      .default(true)
+      .describe("Create parent directories if they don't exist"),
   }),
   outputSchema: z.object({
     path: z.string().describe("Absolute path to the file that was written"),
@@ -26,9 +30,9 @@ export const writeFileTool = tool({
       }
 
       // Write the file
-      writeFileSync(path, content, { encoding: 'utf-8' });
-      
-      const bytesWritten = Buffer.byteLength(content, 'utf-8');
+      writeFileSync(path, content, { encoding: "utf-8" });
+
+      const bytesWritten = Buffer.byteLength(content, "utf-8");
 
       return {
         path,
