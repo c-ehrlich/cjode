@@ -2,7 +2,7 @@
 
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import { streamText } from "ai";
+import { stepCountIs, streamText } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { getConfig } from "@cjode/config";
 import { program } from "commander";
@@ -149,6 +149,7 @@ server.post<{
     try {
       // Stream the AI response
       const result = streamText({
+        stopWhen: stepCountIs(20),
         model,
         messages: conversationHistory,
         temperature: 0.7,
