@@ -1,6 +1,6 @@
 {
   "name": "@c-ehrlich/cjode",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "publishConfig": {
     "access": "public"
   },
@@ -36,10 +36,10 @@
     "@ai-sdk/anthropic": "^2.0.0"
   },
   "devDependencies": {
-    "@c-ehrlich/cjode-server": "workspace:*",
-    "@cjode/config": "workspace:*",
-    "@cjode/core": "workspace:*",
-    "@cjode/state": "workspace:*",
+    "@c-ehrlich/cjode-server": "0.10.1",
+    "@cjode/config": "0.1.1",
+    "@cjode/core": "0.1.1",
+    "@cjode/state": "0.1.1",
     "tsup": "^8.5.0",
     "typescript": "^5.7.0"
   }
