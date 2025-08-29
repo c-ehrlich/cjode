@@ -63,8 +63,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.9(zod@4.1.5)
       "@c-ehrlich/cjode-server":
-        specifier: ^0.10.2
-        version: 0.10.2
+        specifier: ^0.11.0
+        version: 0.11.0
       "@fastify/cors":
         specifier: ^10.0.0
         version: 10.1.0
@@ -322,10 +322,10 @@ packages:
       }
     engines: { node: ">=18" }
 
-  "@c-ehrlich/cjode-server@0.10.2":
+  "@c-ehrlich/cjode-server@0.11.0":
     resolution:
       {
-        integrity: sha512-n73FB26662S7aCy8oQf84leIWs5z5IO8nWN19CU6QG8j+6ETWbyaUeIjFy5jyx06QmMQheWq/iXNJdphalZUmQ==,
+        integrity: sha512-STiotxXQYQgKo7x1UT7KylEQMe7GlPr2BXKaDcc1tajxErGZhDALFztSFT8XOBw1MjPw2RD6t3sYZVCHiFVDiA==,
       }
     engines: { node: ">=20.9.0" }
     hasBin: true
@@ -4568,9 +4568,10 @@ snapshots:
 
   "@bcoe/v8-coverage@1.0.2": {}
 
-  "@c-ehrlich/cjode-server@0.10.2":
+  "@c-ehrlich/cjode-server@0.11.0":
     dependencies:
       "@ai-sdk/anthropic": 2.0.9(zod@3.25.76)
+      "@ai-sdk/provider": 2.0.0
       "@fastify/cors": 10.1.0
       ai: 5.0.27(zod@3.25.76)
       commander: 12.1.0
