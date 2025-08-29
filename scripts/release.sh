@@ -266,10 +266,12 @@ if confirm "Push changes and tags to GitHub?"; then
     git push origin main
     git push origin "v$new_version"
     print_success "Pushed to GitHub"
+    pushed_to_github=true
 else
     print_warning "Skipped pushing to GitHub. Remember to push manually:"
     echo "  git push origin main"
     echo "  git push origin v$new_version"
+    pushed_to_github=false
 fi
 
 # Publish to npm
@@ -281,7 +283,23 @@ if confirm "Publish CLI package to npm?"; then
     if [[ -n "$NPM_TOKEN" ]]; then
         export NODE_AUTH_TOKEN="$NPM_TOKEN"
         print_status "Using NPM_TOKEN for authentication (token: ${NPM_TOKEN:0:8}...)"
-        print_status "Skipping 'npm whoami' check - tokens don't require login"
+        
+        # Try to get user info for debugging
+        if npm_user_debug=$(npm whoami 2>/dev/null); then
+            print_status "Token belongs to npm user: $npm_user_debug"
+        else
+            print_status "Could not determine npm user from token (this might be normal)"
+        fi
+        
+        # Check if we can see the existing package
+        print_status "Checking if token can access @c-ehrlich/cjode..."
+        if npm view @c-ehrlich/cjode version > /dev/null 2>&1; then
+            current_published_version=$(npm view @c-ehrlich/cjode version 2>/dev/null)
+            print_status "Found published version: $current_published_version"
+        else
+            print_warning "Token cannot view @c-ehrlich/cjode package info"
+            print_warning "This may indicate a permission issue"
+        fi
     else
         print_status "No NPM_TOKEN found, checking npm login status..."
         # Verify npm login authentication only if no token
@@ -293,7 +311,29 @@ if confirm "Publish CLI package to npm?"; then
         print_status "Authenticated as npm user: $npm_user"
     fi
     
-    # Use provenance only in CI environments that support it
+    # First try dry run to test authentication
+    print_status "Testing npm publish with --dry-run..."
+    if [[ -n "$GITHUB_ACTIONS" ]]; then
+        npm publish --dry-run --provenance --access public
+    else
+        npm publish --dry-run --access public
+    fi
+    
+    if [[ $? -ne 0 ]]; then
+        print_error "Dry run failed! Fix authentication issues first."
+        exit 1
+    fi
+    
+    print_success "Dry run passed! Token can publish to @c-ehrlich/cjode"
+    
+    if ! confirm "Dry run successful. Proceed with actual publish?"; then
+        print_status "Skipped actual publish"
+        cd ../..
+        exit 0
+    fi
+    
+    # Now do the real publish
+    print_status "Publishing for real..."
     if [[ -n "$GITHUB_ACTIONS" ]]; then
         npm publish --provenance --access public
     else
@@ -308,18 +348,22 @@ else
 fi
 
 # Create GitHub release
-if command -v gh &> /dev/null; then
-    if confirm "Create GitHub release?"; then
-        print_status "Creating GitHub release..."
-        gh release create "v$new_version" \
-            --title "Release v$new_version" \
-            --generate-notes \
-            --latest
-        print_success "Created GitHub release"
+if [[ "$pushed_to_github" == true ]]; then
+    if command -v gh &> /dev/null; then
+        if confirm "Create GitHub release?"; then
+            print_status "Creating GitHub release..."
+            gh release create "v$new_version" \
+                --title "Release v$new_version" \
+                --generate-notes \
+                --latest
+            print_success "Created GitHub release"
+        fi
+    else
+        print_warning "GitHub CLI not installed. Create release manually at:"
+        echo "  https://github.com/c-ehrlich/cjode/releases/new?tag=v$new_version"
     fi
 else
-    print_warning "GitHub CLI not installed. Create release manually at:"
-    echo "  https://github.com/c-ehrlich/cjode/releases/new?tag=v$new_version"
+    print_status "Skipped GitHub release (changes not pushed)"
 fi
 
 print_success "Release completed successfully! 🎉"
