@@ -280,36 +280,17 @@ if confirm "Publish CLI package to npm?"; then
     # Set up npm authentication
     if [[ -n "$NPM_TOKEN" ]]; then
         export NODE_AUTH_TOKEN="$NPM_TOKEN"
-        # Also set up .npmrc for token authentication
-        # echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-    fi
-    
-    # Verify npm authentication
-    print_status "Verifying npm authentication..."
-    if ! npm whoami > /dev/null 2>&1; then
-        print_error "Not authenticated with npm. Check your NPM_TOKEN"
-        print_error "Current token starts with: ${NPM_TOKEN:0:8}..."
-        print_error ""
-        print_error "For granular access tokens (starting with npm_), make sure it has:"
-        print_error "  - Read and write access to @c-ehrlich/cjode"  
-        print_error "  - Correct user scope (c-ehrlich)"
-        print_error ""
-        print_error "Alternative: Try a classic token or run 'npm login' manually"
-        exit 1
-    fi
-    
-    npm_user=$(npm whoami)
-    print_status "Authenticated as npm user: $npm_user"
-    
-    # Check if user has publish permissions for this package
-    if ! npm access list packages | grep -q "@c-ehrlich/cjode" > /dev/null 2>&1; then
-        print_warning "Cannot verify publish permissions for @c-ehrlich/cjode"
-        print_status "Make sure user '$npm_user' has publish access to @c-ehrlich/cjode"
-        if ! confirm "Continue with publish attempt?"; then
-            print_status "Publish cancelled"
-            cd ../..
-            exit 0
+        print_status "Using NPM_TOKEN for authentication (token: ${NPM_TOKEN:0:8}...)"
+        print_status "Skipping 'npm whoami' check - tokens don't require login"
+    else
+        print_status "No NPM_TOKEN found, checking npm login status..."
+        # Verify npm login authentication only if no token
+        if ! npm whoami > /dev/null 2>&1; then
+            print_error "Not authenticated with npm. Run 'npm login' or set NPM_TOKEN"
+            exit 1
         fi
+        npm_user=$(npm whoami)
+        print_status "Authenticated as npm user: $npm_user"
     fi
     
     # Use provenance only in CI environments that support it
