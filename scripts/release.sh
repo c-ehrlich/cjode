@@ -267,7 +267,7 @@ if ! npx cjode start --port 9999 --host 127.0.0.1 > /tmp/integration_test.txt 2>
         rm -rf "$TMP_DIR"
         exit 1
     else
-        # Other errors are acceptable (like port already in use, missing cjode-dev client, etc.)
+        # Other errors are acceptable (like port already in use, missing cjode client, etc.)
         print_info "Command executed but failed for expected reasons (not cjode-server ENOENT)"
     fi
 else

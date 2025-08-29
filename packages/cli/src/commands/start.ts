@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { existsSync } from "node:fs";
 
 import chalk from "chalk";
 import { getConfig } from "@cjode/config";
@@ -19,7 +20,7 @@ export async function startCommand(options: StartOptions = {}) {
   // Validate configuration
   if (!config.ANTHROPIC_API_KEY) {
     console.error(chalk.red("❌ No API key configured!"));
-    console.log(`Run ${chalk.cyan("cjode-dev init")} to set up your configuration.`);
+    console.log(`Run ${chalk.cyan("cjode init")} to set up your configuration.`);
     process.exit(1);
   }
 
@@ -32,8 +33,35 @@ export async function startCommand(options: StartOptions = {}) {
   // Find the server binary path
   const currentFile = fileURLToPath(import.meta.url);
   const currentDir = dirname(currentFile);
-  // In published package, server will be at same level as CLI in node_modules
-  const serverPath = join(currentDir, "../../cjode-server/dist/index.js");
+
+  // Try different possible locations for the server package
+  const possibleServerPaths = [
+    // For global installs: server is in CLI's node_modules
+    join(currentDir, "../node_modules/@c-ehrlich/cjode-server/dist/index.js"),
+    // For local installs: server is at same level as CLI
+    join(currentDir, "../../cjode-server/dist/index.js"),
+  ];
+
+  let serverPath: string | null = null;
+  for (const path of possibleServerPaths) {
+    try {
+      if (existsSync(path)) {
+        serverPath = path;
+        break;
+      }
+    } catch {
+      // Continue to next path
+    }
+  }
+
+  if (!serverPath) {
+    console.error(
+      chalk.red(
+        "❌ Could not find cjode-server package. Please ensure @c-ehrlich/cjode-server is installed.",
+      ),
+    );
+    process.exit(1);
+  }
 
   // Start server using binary
   const serverProcess = spawn("node", [serverPath, "--port", port, "--host", host], {
@@ -84,8 +112,7 @@ export async function startCommand(options: StartOptions = {}) {
     console.log(chalk.gray("Press Ctrl+C to exit"));
     console.log("─".repeat(50));
 
-    // Use cjode-dev binary for the client
-    const clientProcess = spawn("cjode-dev", ["chat", "--server", serverUrl], {
+    const clientProcess = spawn("cjode", ["chat", "--server", serverUrl], {
       env: {
         ...process.env,
         NODE_ENV: "production",
