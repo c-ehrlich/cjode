@@ -211,6 +211,21 @@ update_package_version "packages/config" "$new_version"
 update_package_version "packages/core" "$new_version"
 update_package_version "packages/state" "$new_version"
 
+# Update cross-package dependencies
+print_status "Updating cross-package dependencies..."
+node -e "
+    const fs = require('fs');
+    const cliPackagePath = 'packages/cli/package.json';
+    const cliPkg = JSON.parse(fs.readFileSync(cliPackagePath, 'utf8'));
+    
+    // Update CLI's dependency on server package
+    if (cliPkg.dependencies && cliPkg.dependencies['@c-ehrlich/cjode-server']) {
+        cliPkg.dependencies['@c-ehrlich/cjode-server'] = '^$new_version';
+        fs.writeFileSync(cliPackagePath, JSON.stringify(cliPkg, null, 2) + '\n');
+        console.log('Updated CLI dependency on server to ^$new_version');
+    }
+"
+
 # Update manifest file
 echo "{
   \"packages/cli\": \"$new_version\",
@@ -319,9 +334,10 @@ else
 fi
 
 # Publish to npm
-if confirm "Publish CLI package to npm?"; then
-    print_status "Publishing to npm..."
-    cd packages/cli
+if confirm "Publish packages to npm?"; then
+    # Publish server first (CLI depends on it)
+    print_status "Publishing server to npm..."
+    cd packages/server
     
     # Set up npm authentication
     if [[ -n "$NPM_TOKEN" ]]; then
@@ -335,13 +351,13 @@ if confirm "Publish CLI package to npm?"; then
             print_status "Could not determine npm user from token (this might be normal)"
         fi
         
-        # Check if we can see the existing package
-        print_status "Checking if token can access @c-ehrlich/cjode..."
-        if npm view @c-ehrlich/cjode version > /dev/null 2>&1; then
-            current_published_version=$(npm view @c-ehrlich/cjode version 2>/dev/null)
-            print_status "Found published version: $current_published_version"
+        # Check if we can see the existing packages
+        print_status "Checking if token can access @c-ehrlich/cjode-server..."
+        if npm view @c-ehrlich/cjode-server version > /dev/null 2>&1; then
+            current_published_version=$(npm view @c-ehrlich/cjode-server version 2>/dev/null)
+            print_status "Found published server version: $current_published_version"
         else
-            print_warning "Token cannot view @c-ehrlich/cjode package info"
+            print_warning "Token cannot view @c-ehrlich/cjode-server package info"
             print_warning "This may indicate a permission issue"
         fi
     else
@@ -368,7 +384,7 @@ if confirm "Publish CLI package to npm?"; then
         exit 1
     fi
     
-    print_success "Dry run passed! Token can publish to @c-ehrlich/cjode"
+    print_success "Dry run passed! Token can publish to @c-ehrlich/cjode-server"
     
     if ! confirm "Dry run successful. Proceed with actual publish?"; then
         print_status "Skipped actual publish"
@@ -377,14 +393,47 @@ if confirm "Publish CLI package to npm?"; then
     fi
     
     # Now do the real publish
-    print_status "Publishing for real..."
+    print_status "Publishing server for real..."
+    if [[ -n "$GITHUB_ACTIONS" ]]; then
+        npm publish --provenance --access public
+    else
+        npm publish --access public
+    fi
+    print_success "Published server to npm!"
+    
+    # Now publish CLI
+    print_status "Publishing CLI to npm..."
+    cd ../cli
+    
+    # Test CLI publish
+    print_status "Testing CLI npm publish with --dry-run..."
+    if [[ -n "$GITHUB_ACTIONS" ]]; then
+        npm publish --dry-run --provenance --access public
+    else
+        npm publish --dry-run --access public
+    fi
+    
+    if [[ $? -ne 0 ]]; then
+        print_error "CLI dry run failed!"
+        exit 1
+    fi
+    
+    print_success "CLI dry run passed!"
+    
+    if ! confirm "Proceed with CLI publish?"; then
+        print_status "Skipped CLI publish"
+        cd ../..
+        exit 0
+    fi
+    
+    print_status "Publishing CLI for real..."
     if [[ -n "$GITHUB_ACTIONS" ]]; then
         npm publish --provenance --access public
     else
         npm publish --access public
     fi
     cd ../..
-    print_success "Published to npm!"
+    print_success "Published CLI to npm!"
 else
     print_warning "Skipped npm publish. To publish manually:"
     echo "  cd packages/cli"  
