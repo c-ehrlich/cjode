@@ -249,12 +249,13 @@ npx publint
 
 # Integration test - install the tarball and test the command works
 print_info "Running packaging integration test..."
-ORIGINAL_DIR=$(pwd)
+CLI_DIR=$(pwd)  # We're currently in packages/cli
+PROJECT_ROOT=$(cd ../..; pwd)  # Get the project root directory
 TMP_DIR=$(mktemp -d)
 cd "$TMP_DIR"
 npm init -y > /dev/null 2>&1
 # Get the absolute path to the tarball (the most recent one)
-TARBALL_PATH=$(ls -t "$ORIGINAL_DIR"/c-ehrlich-cjode-*.tgz | head -1)
+TARBALL_PATH=$(ls -t "$CLI_DIR"/c-ehrlich-cjode-*.tgz | head -1)
 npm install "$TARBALL_PATH" > /dev/null 2>&1
 
 # Test that the cjode command exists and can start (should fail with ENOENT if cjode-server is missing)
@@ -262,7 +263,7 @@ if ! npx cjode start --port 9999 --host 127.0.0.1 > /tmp/integration_test.txt 2>
     if grep -q "Error: spawn cjode-server ENOENT" /tmp/integration_test.txt; then
         print_error "Integration test failed: cjode-server binary not found in package"
         cat /tmp/integration_test.txt
-        cd - > /dev/null
+        cd "$PROJECT_ROOT"
         rm -rf "$TMP_DIR"
         exit 1
     else
@@ -273,7 +274,8 @@ else
     print_success "Integration test passed: cjode command executed successfully"
 fi
 
-cd - > /dev/null
+# Return to project root and cleanup
+cd "$PROJECT_ROOT"
 rm -rf "$TMP_DIR"
 
 print_success "CLI package validation passed"
