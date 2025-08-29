@@ -1,6 +1,6 @@
 {
   "name": "@c-ehrlich/cjode-server",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "private": true,
   "type": "module",
   "engines": {
@@ -30,8 +30,8 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@cjode/config": "workspace:*",
-    "@cjode/state": "workspace:*",
+    "@cjode/config": "0.1.1",
+    "@cjode/state": "0.1.1",
     "@types/node": "^22.0.0",
     "tsup": "^8.5.0",
     "typescript": "^5.7.0"
