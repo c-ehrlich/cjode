@@ -12,15 +12,10 @@ export default defineConfig({
   bundle: true,
 
   // Explicitly bundle workspace packages (critical for single-package distribution)
-  noExternal: [
-    "@c-ehrlich/cjode-server",
-    "@cjode/config",
-    "@cjode/core",
-    "@cjode/state"
-  ],
+  noExternal: ["@c-ehrlich/cjode-server", "@cjode/config", "@cjode/core", "@cjode/state"],
   external: [
     // Keep major external dependencies external to minimize bundle size
-    "commander", 
-    "chalk"
-  ]
+    "commander",
+    "chalk",
+  ],
 });
