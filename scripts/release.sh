@@ -91,6 +91,26 @@ update_package_version() {
 # Main script starts here
 print_status "Starting manual release process..."
 
+# Load .env file if it exists
+if [[ -f ".env" ]]; then
+    print_status "Loading environment variables from .env..."
+    set -a  # automatically export all variables
+    source .env
+    set +a  # stop automatically exporting
+else
+    print_warning "No .env file found"
+fi
+
+# Check for npm token early to avoid wasting time
+if [[ -z "$NPM_TOKEN" ]] && [[ -z "$NODE_AUTH_TOKEN" ]]; then
+    print_error "No NPM_TOKEN or NODE_AUTH_TOKEN found in environment"
+    print_error "Add NPM_TOKEN to your .env file or set NODE_AUTH_TOKEN"
+    print_error "Get your token from: https://www.npmjs.com/settings/tokens"
+    exit 1
+fi
+
+print_status "Found npm authentication token ✓"
+
 # Check if we're in the right directory
 if [[ ! -f "package.json" ]] || [[ ! -f "pnpm-workspace.yaml" ]]; then
     print_error "Must be run from project root directory"
@@ -257,13 +277,9 @@ if confirm "Publish CLI package to npm?"; then
     print_status "Publishing to npm..."
     cd packages/cli
     
-    if [[ -z "$NODE_AUTH_TOKEN" ]] && [[ -z "$NPM_TOKEN" ]]; then
-        print_warning "No NPM_TOKEN or NODE_AUTH_TOKEN found in environment"
-        print_status "Make sure you're logged in to npm:"
-        npm whoami || {
-            print_error "Not logged in to npm. Run 'npm login' first"
-            exit 1
-        }
+    # Set NODE_AUTH_TOKEN for npm publish if using NPM_TOKEN
+    if [[ -n "$NPM_TOKEN" ]] && [[ -z "$NODE_AUTH_TOKEN" ]]; then
+        export NODE_AUTH_TOKEN="$NPM_TOKEN"
     fi
     
     npm publish --provenance
@@ -272,7 +288,7 @@ if confirm "Publish CLI package to npm?"; then
 else
     print_warning "Skipped npm publish. To publish manually:"
     echo "  cd packages/cli"
-    echo "  npm publish --provenance"
+    echo "  NODE_AUTH_TOKEN=\$NPM_TOKEN npm publish --provenance"
 fi
 
 # Create GitHub release
