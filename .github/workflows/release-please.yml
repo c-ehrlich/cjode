@@ -3,6 +3,7 @@ name: Release Please
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -16,30 +17,39 @@ concurrency:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    # keep your safeguard (prevents bot loops)
     if: github.actor != 'github-actions[bot]'
     steps:
+      # 1) TAG/RELEASE any merged release PRs (creates vX.Y.Z and GitHub Release)
       - uses: googleapis/release-please-action@v4
-        id: release
+        id: tag
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          skip-github-pull-request: true
 
-      # Only run publish steps when a release was actually created
-      - uses: actions/checkout@v4
-        if: ${{ steps.release.outputs.release_created }}
+      # 2) OPEN/REFRESH the next release PR (no tag here)
+      - uses: googleapis/release-please-action@v4
+        id: pr
         with:
-          ref: ${{ steps.release.outputs.tag_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          skip-github-release: true
+
+      # -------- publish only when a release was created in step 1 --------
+      - uses: actions/checkout@v4
+        if: ${{ steps.tag.outputs.release_created }}
+        with:
+          ref: ${{ steps.tag.outputs.tag_name }}
           fetch-depth: 0
           persist-credentials: false
 
-      # Install pnpm first so setup-node's pnpm cache can run
       - uses: pnpm/action-setup@v4
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.tag.outputs.release_created }}
         with:
           version: 8.15.0
           run_install: false
 
       - uses: actions/setup-node@v4
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.tag.outputs.release_created }}
         with:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
@@ -47,24 +57,22 @@ jobs:
           cache-dependency-path: "pnpm-lock.yaml"
 
       - name: Configure npm auth
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.tag.outputs.release_created }}
         run: echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" >> ~/.npmrc
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Install
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.tag.outputs.release_created }}
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.tag.outputs.release_created }}
         run: pnpm build
 
       - name: Publish to npm
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.tag.outputs.release_created }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          # Use pnpm's built-in workspace dependency resolution
-          # This automatically converts workspace:* to actual versions
           pnpm publish -r --access public --no-git-checks
