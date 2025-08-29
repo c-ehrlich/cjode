@@ -1,14 +1,13 @@
 {
-  "release-type": "node",
-  "include-component-in-tag": false,
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "include-v-in-tag": true,
-  "skip-github-release": false,
+  "include-component-in-tag": true,
+  "group-pull-request-title-pattern": "chore${scope}: release ${branch}",
   "packages": {
-    "packages/cli": {
-      "package-name": "@c-ehrlich/cjode"
-    },
-    "packages/server": {
-      "package-name": "@c-ehrlich/cjode-server"
-    }
-  }
+    "packages/cli":    { "release-type": "node", "component": "cjode" },
+    "packages/server": { "release-type": "node", "component": "cjode-server" }
+  },
+  "plugins": [
+    { "type": "linked-versions", "components": ["cjode", "cjode-server"] }
+  ]
 }
