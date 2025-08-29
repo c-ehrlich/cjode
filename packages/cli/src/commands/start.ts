@@ -1,4 +1,6 @@
 import { spawn } from "node:child_process";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 
 import chalk from "chalk";
 import { getConfig } from "@cjode/config";
@@ -27,8 +29,14 @@ export async function startCommand(options: StartOptions = {}) {
 
   console.log(`📡 Starting server on ${chalk.cyan(serverUrl)}...`);
 
+  // Find the server binary path
+  const currentFile = fileURLToPath(import.meta.url);
+  const currentDir = dirname(currentFile);
+  // In published package, server will be at same level as CLI in node_modules
+  const serverPath = join(currentDir, "../../cjode-server/dist/index.js");
+
   // Start server using binary
-  const serverProcess = spawn("cjode-server", ["--port", port, "--host", host], {
+  const serverProcess = spawn("node", [serverPath, "--port", port, "--host", host], {
     env: {
       ...process.env,
       NODE_ENV: "production",

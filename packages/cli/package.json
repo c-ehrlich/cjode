@@ -1,6 +1,6 @@
 {
   "name": "@c-ehrlich/cjode",
-  "version": "0.9.1",
+  "version": "0.9.3",
   "publishConfig": {
     "access": "public"
   },
@@ -33,10 +33,10 @@
     "fastify": "^5.0.0",
     "@fastify/cors": "^10.0.0",
     "ai": "^5.0.0",
-    "@ai-sdk/anthropic": "^2.0.0"
+    "@ai-sdk/anthropic": "^2.0.0",
+    "@c-ehrlich/cjode-server": "^0.9.2"
   },
   "devDependencies": {
-    "@c-ehrlich/cjode-server": "workspace:*",
     "@cjode/config": "workspace:*",
     "@cjode/core": "workspace:*",
     "@cjode/state": "workspace:*",

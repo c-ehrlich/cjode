@@ -1,7 +1,9 @@
 {
   "name": "@c-ehrlich/cjode-server",
-  "version": "0.9.1",
-  "private": true,
+  "version": "0.9.2",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "engines": {
     "node": ">=20.9.0"
@@ -13,6 +15,11 @@
   "exports": {
     ".": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "NODE_ENV=development tsx watch src/index.ts",
