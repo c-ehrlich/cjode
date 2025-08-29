@@ -277,9 +277,11 @@ if confirm "Publish CLI package to npm?"; then
     print_status "Publishing to npm..."
     cd packages/cli
     
-    # Set NODE_AUTH_TOKEN for npm publish if using NPM_TOKEN
-    if [[ -n "$NPM_TOKEN" ]] && [[ -z "$NODE_AUTH_TOKEN" ]]; then
+    # Set up npm authentication
+    if [[ -n "$NPM_TOKEN" ]]; then
         export NODE_AUTH_TOKEN="$NPM_TOKEN"
+        # Also set up .npmrc for token authentication
+        # echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
     fi
     
     # Verify npm authentication
@@ -287,7 +289,12 @@ if confirm "Publish CLI package to npm?"; then
     if ! npm whoami > /dev/null 2>&1; then
         print_error "Not authenticated with npm. Check your NPM_TOKEN"
         print_error "Current token starts with: ${NPM_TOKEN:0:8}..."
-        print_error "Get a new token from: https://www.npmjs.com/settings/tokens"
+        print_error ""
+        print_error "For granular access tokens (starting with npm_), make sure it has:"
+        print_error "  - Read and write access to @c-ehrlich/cjode"  
+        print_error "  - Correct user scope (c-ehrlich)"
+        print_error ""
+        print_error "Alternative: Try a classic token or run 'npm login' manually"
         exit 1
     fi
     
