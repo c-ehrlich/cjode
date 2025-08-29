@@ -1,6 +1,13 @@
 {
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "release-type": "node",
-  "plugins": ["node-workspace"],
+  "plugins": [
+    {
+      "type": "node-workspace",
+      "merge": true,
+      "update-peer-dependencies": false
+    }
+  ],
   "packages": {
     "packages/cli": {
       "package-name": "@c-ehrlich/cjode",
@@ -8,18 +15,22 @@
     },
     "packages/server": {
       "package-name": "@c-ehrlich/cjode-server",
+      "component": "cjode-server",
       "skip-github-release": true
     },
     "packages/config": {
       "package-name": "@cjode/config",
+      "component": "config",
       "skip-github-release": true
     },
     "packages/core": {
       "package-name": "@cjode/core",
+      "component": "core",
       "skip-github-release": true
     },
     "packages/state": {
       "package-name": "@cjode/state",
+      "component": "state",
       "skip-github-release": true
     }
   },
@@ -28,6 +39,7 @@
   "bump-minor-pre-major": true,
   "bump-patch-for-minor-pre-major": true,
   "skip-github-release": false,
-  "include-component-in-tag": true,
-  "tag-separator": "-"
+  "include-component-in-tag": false,
+  "tag-separator": "-",
+  "always-link-local": true
 }

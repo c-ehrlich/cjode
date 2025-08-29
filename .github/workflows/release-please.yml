@@ -30,23 +30,23 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Node & pnpm
-        if: ${{ steps.rp.outputs['packages_cli--release_created'] }}
+        if: ${{ steps.rp.outputs['cli--release_created'] }}
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
 
       - uses: pnpm/action-setup@v4
-        if: ${{ steps.rp.outputs['packages_cli--release_created'] }}
+        if: ${{ steps.rp.outputs['cli--release_created'] }}
 
       - name: Install & build
-        if: ${{ steps.rp.outputs['packages_cli--release_created'] }}
+        if: ${{ steps.rp.outputs['cli--release_created'] }}
         run: |
-          pnpm install --frozen-lockfile
+          pnpm install --no-frozen-lockfile
           pnpm -r run build
 
       - name: Validate bundle
-        if: ${{ steps.rp.outputs['packages_cli--release_created'] }}
+        if: ${{ steps.rp.outputs['cli--release_created'] }}
         run: |
           cd packages/cli
           npm pack --dry-run > /tmp/pack.txt
@@ -56,7 +56,7 @@ jobs:
           npx publint
 
       - name: Publish
-        if: ${{ steps.rp.outputs['packages_cli--release_created'] }}
+        if: ${{ steps.rp.outputs['cli--release_created'] }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
