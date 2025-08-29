@@ -1,7 +1,7 @@
 import { spawnSync } from "child_process";
 import { resolve, relative, isAbsolute } from "path";
 
-import { generateObject, tool } from "ai";
+import { generateText, tool } from "ai";
 import { z } from "zod";
 
 import { Anthropic } from "../models/anthropic";
@@ -9,11 +9,11 @@ import { Anthropic } from "../models/anthropic";
 const reviewerPrompt = `
 You are a bash command safety reviewer. You are given a command that a local coding agent similar to Cursor or Claude Code wants to run. Your job is to review bash commands for safety and potential issues before they are executed. You will be given a command and you need to provide feedback on its safety.
 
-Please reply with an object that contains the key "result", which is either "safe" or "destructive". Just one word.
+Please reply with either "destructive" or "safe". Just that exact word. No explanation etc.
 
 Examples:
-ls => {safe
-rm -rf / => destructive
+"ls" => "safe"
+"rm -rf /" => "destructive"
 
 The command is:
 `;
@@ -33,16 +33,19 @@ export const bashTool = tool({
     stdout: z.string().describe("Standard output from the command"),
   }),
   execute: async ({ cmd, cwd }) => {
-    const canRunRes = await generateObject({
+    const canRunRes = await generateText({
       model: Anthropic.ClaudeHaiku35,
       prompt: [
         { role: "system", content: reviewerPrompt },
         { role: "user", content: cmd },
       ],
-      schema: z.object({ result: z.enum(["safe", "destructive"]) }),
     });
 
-    if (canRunRes.object.result === "destructive") {
+    if (!["safe", "destructive"].includes(canRunRes.text)) {
+      console.error("Unexpected response from safety reviewer", canRunRes.text);
+    }
+
+    if (canRunRes.text.toLowerCase().includes("destructive")) {
       throw new Error(`Command is potentially destructive: ${cmd}`);
     }
 
