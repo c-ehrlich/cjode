@@ -1,0 +1,64 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allow manual testing
+
+# Prevent concurrent releases
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write # for npm provenance
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: google-github-actions/release-please-action@v4
+        id: rp
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node & pnpm
+        if: ${{ steps.rp.outputs['packages_cli--release_created'] }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - uses: pnpm/action-setup@v4
+        if: ${{ steps.rp.outputs['packages_cli--release_created'] }}
+
+      - name: Install & build
+        if: ${{ steps.rp.outputs['packages_cli--release_created'] }}
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm -r run build
+
+      - name: Validate bundle
+        if: ${{ steps.rp.outputs['packages_cli--release_created'] }}
+        run: |
+          cd packages/cli
+          npm pack --dry-run > /tmp/pack.txt
+          grep -q "node_modules/@cjode" /tmp/pack.txt && echo "Internal packages leaked" && exit 1
+          grep -q "node_modules/@c-ehrlich/cjode-server" /tmp/pack.txt && echo "Server leaked" && exit 1
+          node dist/cjode.js --help > /tmp/cli_output.txt 2>&1 || (echo "CLI failed:" && cat /tmp/cli_output.txt && exit 1)
+          npx publint
+
+      - name: Publish
+        if: ${{ steps.rp.outputs['packages_cli--release_created'] }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd packages/cli
+          npm publish --provenance
