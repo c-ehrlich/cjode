@@ -1,7 +1,7 @@
 {
-  "packages/cli": "0.10.10",
-  "packages/server": "0.10.10",
-  "packages/config": "0.10.10",
-  "packages/core": "0.10.10",
-  "packages/state": "0.10.10"
+  "packages/cli": "0.10.11",
+  "packages/server": "0.10.11",
+  "packages/config": "0.10.11",
+  "packages/core": "0.10.11",
+  "packages/state": "0.10.11"
 }
