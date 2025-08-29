@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.10.2](https://github.com/c-ehrlich/cjode/compare/cli-v0.10.1...cli-v0.10.2) (2025-08-29)
+
+
+### Bug Fixes
+
+* hopefully fix build ([#48](https://github.com/c-ehrlich/cjode/issues/48)) ([dff4d1b](https://github.com/c-ehrlich/cjode/commit/dff4d1b61e86e5f2d6c69f06fd084835be8d58a8))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @c-ehrlich/cjode-server bumped to 0.10.2
+    * @cjode/config bumped to 0.1.2
+    * @cjode/core bumped to 0.1.2
+    * @cjode/state bumped to 0.1.2
+
 ## [0.10.1](https://github.com/c-ehrlich/cjode/compare/cli-v0.10.0...cli-v0.10.1) (2025-08-29)
 
 
