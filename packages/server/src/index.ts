@@ -9,6 +9,7 @@ import { getConfig } from "@cjode/config";
 import { readTool } from "./tools/read.tool";
 import { listDirTool } from "./tools/list-dir.tool";
 import { Anthropic } from "./models/anthropic";
+import { bashTool } from "./tools/bash.tool";
 
 // Parse CLI arguments
 program
@@ -136,6 +137,7 @@ server.post<{
     maxOutputTokens: 32000,
     stopWhen: stepCountIs(100),
     tools: {
+      bashTool,
       listDirTool,
       readTool,
     },
