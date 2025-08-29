@@ -12,7 +12,7 @@
     "build:npm": "bash scripts/build-like-npm.sh",
     "dev": "NODE_ENV=development turbo dev",
     "dev:client": "NODE_ENV=development node packages/cli/dist/cjode.js chat --server http://127.0.0.1:${PORT:-3001}",
-    "dev:server": "NODE_ENV=development pnpm --filter=@c-ehrlich/cjode-server dev",
+    "dev:server": "NODE_ENV=development PORT=${PORT:-3001} HOST=${HOST:-127.0.0.1} pnpm --filter=@c-ehrlich/cjode-server dev",
     "dev:install": "bash scripts/dev-install.sh",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",

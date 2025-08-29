@@ -12,8 +12,8 @@ import { listDirTool } from "./tools/list-dir.tool";
 
 // Parse CLI arguments
 program
-  .option("--port <port>", "Server port", "3001")
-  .option("--host <host>", "Server host", "localhost")
+  .option("--port <port>", "Server port", process.env.PORT || "3001")
+  .option("--host <host>", "Server host", process.env.HOST || "localhost")
   .parse();
 
 const options = program.opts();
@@ -149,11 +149,10 @@ server.post<{
     try {
       // Stream the AI response
       const result = streamText({
-        stopWhen: stepCountIs(20),
+        stopWhen: stepCountIs(100),
         model,
         messages: conversationHistory,
-        temperature: 0.7,
-        maxOutputTokens: 2000,
+        maxOutputTokens: 32000,
         tools: {
           listDirTool,
           readTool,

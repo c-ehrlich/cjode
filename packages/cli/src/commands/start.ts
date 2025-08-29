@@ -120,6 +120,25 @@ export async function startCommand(options: StartOptions = {}) {
       stdio: "inherit",
     });
 
+    // Handle client errors
+    clientProcess.on("error", (error) => {
+      console.error(chalk.red("❌ Chat client error:"));
+      if (error.message.includes("ENOENT")) {
+        console.error(chalk.red("   The 'cjode' command was not found."));
+        console.error(chalk.yellow("   Make sure Cjode is properly installed globally or run:"));
+        console.error(chalk.cyan("   npm install -g @c-ehrlich/cjode"));
+      } else {
+        console.error(chalk.red(`   ${error.message}`));
+      }
+
+      // Gracefully shutdown server
+      if (serverProcess && !serverProcess.killed) {
+        console.log(chalk.yellow("📡 Shutting down server..."));
+        serverProcess.kill("SIGTERM");
+      }
+      process.exit(1);
+    });
+
     // Handle client exit
     clientProcess.on("exit", (code) => {
       console.log();
