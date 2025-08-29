@@ -7,6 +7,7 @@ import { serverCommand } from "./commands/server.js";
 import { envCommand } from "./commands/env.js";
 import { initCommand } from "./commands/init.js";
 import { startCommand } from "./commands/start.js";
+import { evalCommand } from "./commands/eval.js";
 
 program.name("cjode").description("Agentic coding CLI").version("0.1.0");
 
@@ -44,5 +45,13 @@ program
   .option("--validate", "Validate environment configuration")
   .option("--setup", "Interactive setup for environment variables")
   .action(envCommand);
+
+program
+  .command("eval")
+  .description("Evaluate agent on a coding task (for LiveSWEBench)")
+  .argument("<prompt>", "Task prompt to give the agent")
+  .option("--repo <path>", "Repository path to work in", process.cwd())
+  .option("--output <path>", "Output file for results (default: stdout)")
+  .action(evalCommand);
 
 program.parse();
