@@ -1,13 +1,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node",
   "include-v-in-tag": true,
-  "include-component-in-tag": true,
-  "group-pull-request-title-pattern": "chore${scope}: release ${branch}",
-  "packages": {
-    "packages/cli":    { "release-type": "node", "component": "cjode" },
-    "packages/server": { "release-type": "node", "component": "cjode-server" }
-  },
-  "plugins": [
-    { "type": "linked-versions", "components": ["cjode", "cjode-server"] }
-  ]
+  "include-component-in-tag": false,
+  "plugins": ["node-workspace"],
+  "group-pull-request-title-pattern": "chore${scope}: release ${version}",
+
+  "release-as": "0.11.0"
 }

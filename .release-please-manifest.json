@@ -1,4 +1,1 @@
-{
-  "packages/cli": "0.8.7",
-  "packages/server": "0.10.0"
-}
+{ ".": "0.10.0" }
