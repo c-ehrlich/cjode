@@ -25,6 +25,10 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+print_info() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
 # Function to ask for confirmation
 confirm() {
     read -p "$(echo -e ${YELLOW}[CONFIRM]${NC} $1 [y/N]: )" -n 1 -r
