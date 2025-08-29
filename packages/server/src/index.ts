@@ -8,8 +8,9 @@ import { getConfig } from "@cjode/config";
 
 import { readTool } from "./tools/read.tool";
 import { listDirTool } from "./tools/list-dir.tool";
-import { Anthropic } from "./models/anthropic";
+import { writeFileTool } from "./tools/write-file.tool";
 import { bashTool } from "./tools/bash.tool";
+import { Anthropic } from "./models/anthropic";
 
 // Parse CLI arguments
 program
@@ -140,6 +141,7 @@ server.post<{
       bashTool,
       listDirTool,
       readTool,
+      writeFileTool,
     },
   };
 
