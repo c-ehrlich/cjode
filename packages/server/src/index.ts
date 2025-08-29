@@ -3,12 +3,12 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import { stepCountIs, streamText } from "ai";
-import { createAnthropic } from "@ai-sdk/anthropic";
-import { getConfig } from "@cjode/config";
 import { program } from "commander";
+import { getConfig } from "@cjode/config";
 
 import { readTool } from "./tools/read.tool";
 import { listDirTool } from "./tools/list-dir.tool";
+import { Anthropic } from "./models/anthropic";
 
 // Parse CLI arguments
 program
@@ -52,10 +52,6 @@ interface Message {
 
 // In-memory conversation storage
 const conversations = new Map<string, Message[]>();
-
-// Initialize Anthropic model
-const anthropic = createAnthropic({ apiKey: config.ANTHROPIC_API_KEY });
-const model = anthropic("claude-sonnet-4-20250514");
 
 // Health check endpoint
 server.get("/health", async () => {
@@ -133,6 +129,18 @@ server.post<{
     content: message,
   });
 
+  type StreamTextArgs = Parameters<typeof streamText>[0];
+  const args: StreamTextArgs = {
+    model: Anthropic.ClaudeSonnet4,
+    messages: conversationHistory,
+    maxOutputTokens: 32000,
+    stopWhen: stepCountIs(100),
+    tools: {
+      listDirTool,
+      readTool,
+    },
+  };
+
   // Check if client wants streaming response
   if (acceptHeader.includes("text/event-stream")) {
     // Stream response using SSE
@@ -148,16 +156,7 @@ server.post<{
 
     try {
       // Stream the AI response
-      const result = streamText({
-        stopWhen: stepCountIs(100),
-        model,
-        messages: conversationHistory,
-        maxOutputTokens: 32000,
-        tools: {
-          listDirTool,
-          readTool,
-        },
-      });
+      const result = streamText(args);
 
       let fullResponse = "";
 
@@ -197,12 +196,7 @@ server.post<{
 
   // Fallback to regular JSON response (non-streaming)
   try {
-    const result = streamText({
-      model,
-      messages: conversationHistory,
-      temperature: 0.7,
-      maxOutputTokens: 2000,
-    });
+    const result = streamText(args);
 
     let fullResponse = "";
     for await (const chunk of result.textStream) {
