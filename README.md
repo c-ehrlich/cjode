@@ -144,5 +144,3 @@ CJODE_SERVER_HOST=127.0.0.1
 ## License
 
 MIT License - see LICENSE file for details.
-
-<!-- Release trigger to fix version sync -->
