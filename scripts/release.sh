@@ -251,10 +251,22 @@ print_success "CLI package validation passed"
 # Commit changes
 print_status "Committing version changes..."
 git add .
-git commit -m "chore: release v$new_version
+
+# Check if there are any changes to commit
+if git diff --staged --quiet; then
+    print_warning "No changes to commit (versions might already be at $new_version)"
+    # Check if we should continue anyway
+    if ! confirm "No changes detected. Continue with tagging and publishing?"; then
+        print_status "Release cancelled"
+        exit 0
+    fi
+else
+    git commit -m "chore: release v$new_version
 
 - Bump all packages to $new_version
 - Manual release via release script"
+    print_success "Committed version changes"
+fi
 
 # Create git tag
 print_status "Creating git tag v$new_version..."
