@@ -282,13 +282,18 @@ if confirm "Publish CLI package to npm?"; then
         export NODE_AUTH_TOKEN="$NPM_TOKEN"
     fi
     
-    npm publish --provenance
+    # Use provenance only in CI environments that support it
+    if [[ -n "$GITHUB_ACTIONS" ]]; then
+        npm publish --provenance
+    else
+        npm publish
+    fi
     cd ../..
     print_success "Published to npm!"
 else
     print_warning "Skipped npm publish. To publish manually:"
     echo "  cd packages/cli"
-    echo "  NODE_AUTH_TOKEN=\$NPM_TOKEN npm publish --provenance"
+    echo "  NODE_AUTH_TOKEN=\$NPM_TOKEN npm publish"
 fi
 
 # Create GitHub release
