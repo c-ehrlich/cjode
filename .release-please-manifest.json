@@ -1,6 +1,6 @@
 {
-  "packages/cli": "0.12.0",
-  "packages/server": "0.12.0",
+  "packages/cli": "0.12.1",
+  "packages/server": "0.12.1",
   "packages/config": "0.12.0",
   "packages/core": "0.12.0",
   "packages/state": "0.12.0"

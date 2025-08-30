@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/c-ehrlich/cjode/compare/v0.12.0...v0.12.1) (2025-08-30)
+
+
+### Features
+
+* more tools ([#55](https://github.com/c-ehrlich/cjode/issues/55)) ([9c12c9b](https://github.com/c-ehrlich/cjode/commit/9c12c9b0a6208959cce1a2f191f7195006fda192))
+
 ## [0.10.3](https://github.com/c-ehrlich/cjode/compare/v0.10.2...v0.10.3) (2025-08-29)
 
 
