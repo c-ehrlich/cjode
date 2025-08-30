@@ -34,7 +34,7 @@ export async function runAgent(options: AgentOptions): Promise<AgentResult> {
   try {
     // Load configuration
     const config = getConfig();
-    
+
     if (!config.ANTHROPIC_API_KEY) {
       throw new Error("ANTHROPIC_API_KEY not configured. Run `cjode init` to configure.");
     }
@@ -87,7 +87,6 @@ export async function runAgent(options: AgentOptions): Promise<AgentResult> {
       response: fullResponse,
       success: true,
     };
-    
   } catch (error) {
     // Restore original working directory on error
     if (workingDirectory) {

@@ -8,6 +8,7 @@ import { envCommand } from "./commands/env.js";
 import { initCommand } from "./commands/init.js";
 import { startCommand } from "./commands/start.js";
 import { evalCommand } from "./commands/eval.js";
+import { benchmarkCommand } from "./commands/benchmark.js";
 
 program.name("cjode").description("Agentic coding CLI").version("0.1.0");
 
@@ -53,5 +54,19 @@ program
   .option("--repo <path>", "Repository path to work in", process.cwd())
   .option("--output <path>", "Output file for results (default: stdout)")
   .action(evalCommand);
+
+program
+  .command("benchmark")
+  .description("Run LiveSWEBench benchmark suite")
+  .requiredOption("--output <path>", "Output file for benchmark results (JSON)")
+  .option("--limit <number>", "Limit number of tasks to run", parseInt)
+  .option("--repo-filter <pattern>", "Filter repositories by name pattern")
+  .option(
+    "--workspace-dir <path>",
+    "Directory for cloning repositories",
+    "./liveswebench-workspace",
+  )
+  .option("--skip-existing", "Skip tasks that already have results")
+  .action(benchmarkCommand);
 
 program.parse();
