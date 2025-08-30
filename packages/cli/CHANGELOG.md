@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.12.1](https://github.com/c-ehrlich/cjode/compare/v0.12.0...v0.12.1) (2025-08-30)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @c-ehrlich/cjode-server bumped from ^0.12.0 to ^0.12.1
+
 ## [0.10.3](https://github.com/c-ehrlich/cjode/compare/v0.10.2...v0.10.3) (2025-08-29)
 
 
