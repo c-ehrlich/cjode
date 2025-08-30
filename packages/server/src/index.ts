@@ -147,6 +147,22 @@ server.post<{
       readTool,
       writeFileTool,
     },
+    prepareStep: (options) => {
+      const currentMessage = options.messages[options.messages.length - 1];
+      const currentStep = options.steps[options.steps.length - 1];
+      console.log(`Preparing step ${options.steps.length} for message role=${currentMessage.role}`);
+      if (currentMessage.role === "tool") {
+        for (let i = currentStep.content.length - 1; i >= 0; i--) {
+          const message = currentStep.content[i];
+          if (message.type === "tool-call") {
+            // TODO: push this to frontend
+            console.log(`  Tool call: ${message.toolName}(${JSON.stringify(message.input)})`);
+            return;
+          }
+        }
+      }
+      if (message) return undefined;
+    },
   };
 
   // Check if client wants streaming response
