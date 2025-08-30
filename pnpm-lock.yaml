@@ -63,8 +63,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.9(zod@4.1.5)
       "@c-ehrlich/cjode-server":
-        specifier: ^0.11.0
-        version: 0.11.0
+        specifier: ^0.12.0
+        version: 0.12.0
       "@fastify/cors":
         specifier: ^10.0.0
         version: 10.1.0
@@ -146,6 +146,9 @@ importers:
       "@fastify/cors":
         specifier: ^10.0.0
         version: 10.1.0
+      "@types/glob":
+        specifier: ^9.0.0
+        version: 9.0.0
       ai:
         specifier: ^5.0.0
         version: 5.0.27(zod@3.25.76)
@@ -155,6 +158,9 @@ importers:
       fastify:
         specifier: ^5.0.0
         version: 5.5.0
+      glob:
+        specifier: ^11.0.3
+        version: 11.0.3
       zod:
         specifier: ^3.25.76
         version: 3.25.76
@@ -322,10 +328,10 @@ packages:
       }
     engines: { node: ">=18" }
 
-  "@c-ehrlich/cjode-server@0.11.0":
+  "@c-ehrlich/cjode-server@0.12.0":
     resolution:
       {
-        integrity: sha512-STiotxXQYQgKo7x1UT7KylEQMe7GlPr2BXKaDcc1tajxErGZhDALFztSFT8XOBw1MjPw2RD6t3sYZVCHiFVDiA==,
+        integrity: sha512-KvT5CuhXzn6KAzp9+J/p8VA8NkvKtCyz5POJW9VJzLg3UhkeSmOWRmNWjRno2P7+eJgLj8E8ausCV0Kxs6Aqbw==,
       }
     engines: { node: ">=20.9.0" }
     hasBin: true
@@ -924,6 +930,20 @@ packages:
       }
     engines: { node: ">=18.18" }
 
+  "@isaacs/balanced-match@4.0.1":
+    resolution:
+      {
+        integrity: sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==,
+      }
+    engines: { node: 20 || >=22 }
+
+  "@isaacs/brace-expansion@5.0.0":
+    resolution:
+      {
+        integrity: sha512-ZT55BDLV0yv0RBm2czMiZ+SqCGO7AvmOM3G/w2xhVPH+te0aKgFjmBvGlL1dH+ql2tgGO3MVrbb3jCKyvpgnxA==,
+      }
+    engines: { node: 20 || >=22 }
+
   "@isaacs/cliui@8.0.2":
     resolution:
       {
@@ -1199,6 +1219,13 @@ packages:
       {
         integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==,
       }
+
+  "@types/glob@9.0.0":
+    resolution:
+      {
+        integrity: sha512-00UxlRaIUvYm4R4W9WYkN8/J+kV8fmOQ7okeH6YFtGWFMt3odD45tpG5yA5wnL7HE6lLgjaTW5n14ju2hl2NNA==,
+      }
+    deprecated: This is a stub types definition. glob provides its own type definitions, so you do not need this installed.
 
   "@types/istanbul-lib-coverage@2.0.6":
     resolution:
@@ -2536,6 +2563,14 @@ packages:
       }
     hasBin: true
 
+  glob@11.0.3:
+    resolution:
+      {
+        integrity: sha512-2Nim7dha1KVkaiF4q6Dj+ngPPMdfvLJEOpZk/jKiUAkqKebpGAWQXAq9z1xu9HKu5lWfqw/FASuccEjyznjPaA==,
+      }
+    engines: { node: 20 || >=22 }
+    hasBin: true
+
   globals@14.0.0:
     resolution:
       {
@@ -2912,6 +2947,13 @@ packages:
         integrity: sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==,
       }
 
+  jackspeak@4.1.1:
+    resolution:
+      {
+        integrity: sha512-zptv57P3GpL+O0I7VdMJNBZCu+BPHVQUk55Ft8/QCJjTVxrnJHuVuX/0Bl2A6/+2oyR/ZMEuFKwmzqqZ/U5nPQ==,
+      }
+    engines: { node: 20 || >=22 }
+
   joycon@3.1.1:
     resolution:
       {
@@ -3053,6 +3095,13 @@ packages:
         integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==,
       }
 
+  lru-cache@11.1.0:
+    resolution:
+      {
+        integrity: sha512-QIXZUBJUx+2zHUdQujWejBkcD9+cs94tLn0+YL8UrCh+D5sCXZ4c7LaEH48pNwRY3MLDgqUFyhlCyjJPf1WP0A==,
+      }
+    engines: { node: 20 || >=22 }
+
   magic-string@0.30.18:
     resolution:
       {
@@ -3099,6 +3148,13 @@ packages:
         integrity: sha512-z0yWI+4FDrrweS8Zmt4Ej5HdJmky15+L2e6Wgn3+iK5fWzb6T3fhNFq2+MeTRb064c6Wr4N/wv0DzQTjNzHNGQ==,
       }
     engines: { node: ">=10" }
+
+  minimatch@10.0.3:
+    resolution:
+      {
+        integrity: sha512-IPZ167aShDZZUMdRk66cyQAW3qr0WzbHkPdMYa8bzZhlHhO3jALbKdxcaak7W9FfT2rZNpQuUu4Od7ILEpXSaw==,
+      }
+    engines: { node: 20 || >=22 }
 
   minimatch@3.1.2:
     resolution:
@@ -3318,6 +3374,13 @@ packages:
         integrity: sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA==,
       }
     engines: { node: ">=16 || 14 >=14.18" }
+
+  path-scurry@2.0.0:
+    resolution:
+      {
+        integrity: sha512-ypGJsmGtdXUOeM5u93TyeIEfEhM6s+ljAhrk5vAvSx8uyY/02OvrZnA0YNGUrPXfpJMgI1ODd3nwz8Npx4O4cg==,
+      }
+    engines: { node: 20 || >=22 }
 
   pathe@2.0.3:
     resolution:
@@ -4568,7 +4631,7 @@ snapshots:
 
   "@bcoe/v8-coverage@1.0.2": {}
 
-  "@c-ehrlich/cjode-server@0.11.0":
+  "@c-ehrlich/cjode-server@0.12.0":
     dependencies:
       "@ai-sdk/anthropic": 2.0.9(zod@3.25.76)
       "@ai-sdk/provider": 2.0.0
@@ -4819,6 +4882,12 @@ snapshots:
 
   "@humanwhocodes/retry@0.4.3": {}
 
+  "@isaacs/balanced-match@4.0.1": {}
+
+  "@isaacs/brace-expansion@5.0.0":
+    dependencies:
+      "@isaacs/balanced-match": 4.0.1
+
   "@isaacs/cliui@8.0.2":
     dependencies:
       string-width: 5.1.2
@@ -4938,6 +5007,10 @@ snapshots:
   "@types/diff-match-patch@1.0.36": {}
 
   "@types/estree@1.0.8": {}
+
+  "@types/glob@9.0.0":
+    dependencies:
+      glob: 11.0.3
 
   "@types/istanbul-lib-coverage@2.0.6": {}
 
@@ -5916,6 +5989,15 @@ snapshots:
       package-json-from-dist: 1.0.1
       path-scurry: 1.11.1
 
+  glob@11.0.3:
+    dependencies:
+      foreground-child: 3.3.1
+      jackspeak: 4.1.1
+      minimatch: 10.0.3
+      minipass: 7.1.2
+      package-json-from-dist: 1.0.1
+      path-scurry: 2.0.0
+
   globals@14.0.0: {}
 
   globals@15.15.0: {}
@@ -6118,6 +6200,10 @@ snapshots:
     optionalDependencies:
       "@pkgjs/parseargs": 0.11.0
 
+  jackspeak@4.1.1:
+    dependencies:
+      "@isaacs/cliui": 8.0.2
+
   joycon@3.1.1: {}
 
   js-tokens@9.0.1: {}
@@ -6183,6 +6269,8 @@ snapshots:
 
   lru-cache@10.4.3: {}
 
+  lru-cache@11.1.0: {}
+
   magic-string@0.30.18:
     dependencies:
       "@jridgewell/sourcemap-codec": 1.5.5
@@ -6207,6 +6295,10 @@ snapshots:
       picomatch: 2.3.1
 
   mimic-response@3.1.0: {}
+
+  minimatch@10.0.3:
+    dependencies:
+      "@isaacs/brace-expansion": 5.0.0
 
   minimatch@3.1.2:
     dependencies:
@@ -6332,6 +6424,11 @@ snapshots:
   path-scurry@1.11.1:
     dependencies:
       lru-cache: 10.4.3
+      minipass: 7.1.2
+
+  path-scurry@2.0.0:
+    dependencies:
+      lru-cache: 11.1.0
       minipass: 7.1.2
 
   pathe@2.0.3: {}

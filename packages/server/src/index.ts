@@ -12,6 +12,7 @@ import { writeFileTool } from "./tools/write-file.tool";
 import { bashTool } from "./tools/bash.tool";
 import { Anthropic } from "./models/anthropic";
 import { editFileTool } from "./tools/edit-file.tool";
+import { globTool } from "./tools/glob.tool";
 
 // Parse CLI arguments
 program
@@ -141,9 +142,26 @@ server.post<{
     tools: {
       bashTool,
       editFileTool,
+      globTool,
       listDirTool,
       readTool,
       writeFileTool,
+    },
+    prepareStep: (options) => {
+      const currentMessage = options.messages[options.messages.length - 1];
+      const currentStep = options.steps[options.steps.length - 1];
+      console.log(`Preparing step ${options.steps.length} for message role=${currentMessage.role}`);
+      if (currentMessage.role === "tool") {
+        for (let i = currentStep.content.length - 1; i >= 0; i--) {
+          const message = currentStep.content[i];
+          if (message.type === "tool-call") {
+            // TODO: push this to frontend
+            console.log(`  Tool call: ${message.toolName}(${JSON.stringify(message.input)})`);
+            return;
+          }
+        }
+      }
+      if (message) return undefined;
     },
   };
 
