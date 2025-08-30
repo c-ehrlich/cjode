@@ -12,6 +12,7 @@ import { writeFileTool } from "./tools/write-file.tool";
 import { bashTool } from "./tools/bash.tool";
 import { Anthropic } from "./models/anthropic";
 import { editFileTool } from "./tools/edit-file.tool";
+import { globTool } from "./tools/glob.tool";
 
 // Parse CLI arguments
 program
@@ -141,6 +142,7 @@ server.post<{
     tools: {
       bashTool,
       editFileTool,
+      globTool,
       listDirTool,
       readTool,
       writeFileTool,
